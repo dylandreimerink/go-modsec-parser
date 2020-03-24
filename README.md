@@ -6,12 +6,13 @@ NOTE/WARNING: this library is still in it's early days and is not yet fully func
 
 ## TODO
 
+- [ ] Full support for CRS(Core Rule Set) ([See progress](docs/crs-checklist.md))
+- [ ] Full support for ModSecurity V2 config ([See progress](docs/modsecv2-checklist.md))
+- [ ] Full support for ModSecurity V3 config
 - [ ] Fully unit tested parsing
-- [ ] Fully tested CRS
-- [ ] Full support ModSecurity V2/3 config support
 - [ ] AST walker / traversal
 - [ ] .data file parsing
-- [ ] Node classification (variables: phase 1, phase 2, ect..; actions: flow, metadata, disruptive, ect...)
+- [ ] Full support for ModSecurity V3 config
 
 ## Wishlist
 

@@ -1,0 +1,349 @@
+# ModSecurity V2 checklist
+
+## Directives
+
+- [x] SecAction
+- [ ] SecArgumentSeparator
+- [ ] SecAuditEngine
+- [ ] SecAuditLog
+- [ ] SecAuditLog2
+- [ ] SecAuditLogDirMode
+- [ ] SecAuditLogFormat
+- [ ] SecAuditLogFileMode
+- [ ] SecAuditLogParts
+- [ ] SecAuditLogRelevantStatus
+- [ ] SecAuditLogStorageDir
+- [ ] SecAuditLogType
+- [ ] SecCacheTransformations
+- [ ] SecChrootDir
+- [ ] SecCollectionTimeout
+- [x] SecComponentSignature
+- [ ] SecConnEngine
+- [ ] SecContentInjection
+- [ ] SecCookieFormat
+- [ ] SecCookieV0Separator
+- [ ] SecDataDir
+- [ ] SecDebugLog
+- [ ] SecDebugLogLevel
+- [ ] SecDefaultAction
+- [ ] SecDisableBackendCompression
+- [ ] SecHashEngine
+- [ ] SecHashKey
+- [ ] SecHashParam
+- [ ] SecHashMethodRx
+- [ ] SecHashMethodPm
+- [ ] SecGeoLookupDb
+- [ ] SecGsbLookupDb
+- [ ] SecGuardianLog
+- [ ] SecHttpBlKey
+- [ ] SecInterceptOnError
+- [x] SecMarker
+- [ ] SecPcreMatchLimit
+- [ ] SecPcreMatchLimitRecursion
+- [ ] SecPdfProtect
+- [ ] SecPdfProtectMethod
+- [ ] SecPdfProtectSecret
+- [ ] SecPdfProtectTimeout
+- [ ] SecPdfProtectTokenName
+- [ ] SecReadStateLimit
+- [ ] SecConnReadStateLimit
+- [ ] SecSensorId
+- [ ] SecWriteStateLimit
+- [ ] SecConnWriteStateLimit
+- [ ] SecRemoteRules
+- [ ] SecRemoteRulesFailAction
+- [ ] SecRequestBodyAccess
+- [ ] SecRequestBodyInMemoryLimit
+- [ ] SecRequestBodyLimit
+- [ ] SecRequestBodyNoFilesLimit
+- [ ] SecRequestBodyLimitAction
+- [ ] SecResponseBodyLimit
+- [ ] SecResponseBodyLimitAction
+- [ ] SecResponseBodyMimeType
+- [ ] SecResponseBodyMimeTypesClear
+- [ ] SecResponseBodyAccess
+- [x] SecRule
+- [ ] SecRuleInheritance
+- [x] SecRuleEngine
+- [ ] SecRulePerfTime
+- [ ] SecRuleRemoveById
+- [ ] SecRuleRemoveByMsg
+- [ ] SecRuleRemoveByTag
+- [ ] SecRuleScript
+- [ ] SecRuleUpdateActionById
+- [ ] SecRuleUpdateTargetById
+- [ ] SecRuleUpdateTargetByMsg
+- [ ] SecRuleUpdateTargetByTag
+- [ ] SecServerSignature
+- [ ] SecStatusEngine
+- [ ] SecStreamInBodyInspection
+- [ ] SecStreamOutBodyInspection
+- [ ] SecTmpDir
+- [ ] SecUnicodeMapFile
+- [ ] SecUnicodeCodePage
+- [ ] SecUploadDir
+- [ ] SecUploadFileLimit
+- [ ] SecUploadFileMode
+- [ ] SecUploadKeepFiles
+- [ ] SecWebAppId
+- [ ] SecXmlExternalEntity
+
+## Variables
+
+- [ ] ARGS
+- [ ] ARGS_COMBINED_SIZE
+- [ ] ARGS_GET
+- [ ] ARGS_GET_NAMES
+- [ ] ARGS_NAMES
+- [ ] ARGS_POST
+- [ ] ARGS_POST_NAMES
+- [ ] AUTH_TYPE
+- [x] DURATION
+- [ ] ENV
+- [ ] FILES
+- [ ] FILES_COMBINED_SIZE
+- [ ] FILES_NAMES
+- [ ] FULL_REQUEST
+- [ ] FULL_REQUEST_LENGTH
+- [ ] FILES_SIZES
+- [ ] FILES_TMPNAMES
+- [ ] FILES_TMP_CONTENT
+- [ ] GEO
+- [ ] HIGHEST_SEVERITY
+- [ ] INBOUND_DATA_ERROR
+- [ ] MATCHED_VAR
+- [ ] MATCHED_VARS
+- [ ] MATCHED_VAR_NAME
+- [ ] MATCHED_VARS_NAMES
+- [ ] MODSEC_BUILD
+- [ ] MULTIPART_CRLF_LF_LINES
+- [ ] MULTIPART_FILENAME
+- [ ] MULTIPART_NAME
+- [ ] MULTIPART_STRICT_ERROR
+- [ ] MULTIPART_UNMATCHED_BOUNDARY
+- [ ] OUTBOUND_DATA_ERROR
+- [ ] PATH_INFO
+- [ ] PERF_ALL
+- [ ] PERF_COMBINED
+- [ ] PERF_GC
+- [ ] PERF_LOGGING
+- [ ] PERF_PHASE1
+- [ ] PERF_PHASE2
+- [ ] PERF_PHASE3
+- [ ] PERF_PHASE4
+- [ ] PERF_PHASE5
+- [ ] PERF_RULES
+- [ ] PERF_SREAD
+- [ ] PERF_SWRITE
+- [ ] QUERY_STRING
+- [ ] REMOTE_ADDR
+- [ ] REMOTE_HOST
+- [ ] REMOTE_PORT
+- [ ] REMOTE_USER
+- [ ] REQBODY_ERROR
+- [ ] REQBODY_ERROR_MSG
+- [x] REQBODY_PROCESSOR
+- [ ] REQUEST_BASENAME
+- [ ] REQUEST_BODY
+- [ ] REQUEST_BODY_LENGTH
+- [ ] REQUEST_COOKIES
+- [ ] REQUEST_COOKIES_NAMES
+- [ ] REQUEST_FILENAME
+- [x] REQUEST_HEADERS
+- [ ] REQUEST_HEADERS_NAMES
+- [ ] REQUEST_LINE
+- [ ] REQUEST_METHOD
+- [ ] REQUEST_PROTOCOL
+- [ ] REQUEST_URI
+- [ ] REQUEST_URI_RAW
+- [ ] RESPONSE_BODY
+- [ ] RESPONSE_CONTENT_LENGTH
+- [ ] RESPONSE_CONTENT_TYPE
+- [ ] RESPONSE_HEADERS
+- [ ] RESPONSE_HEADERS_NAMES
+- [ ] RESPONSE_PROTOCOL
+- [ ] RESPONSE_STATUS
+- [ ] RULE
+- [ ] SCRIPT_BASENAME
+- [ ] SCRIPT_FILENAME
+- [ ] SCRIPT_GID
+- [ ] SCRIPT_GROUPNAME
+- [ ] SCRIPT_MODE
+- [ ] SCRIPT_UID
+- [ ] SCRIPT_USERNAME
+- [ ] SDBM_DELETE_ERROR
+- [ ] SERVER_ADDR
+- [ ] SERVER_NAME
+- [ ] SERVER_PORT
+- [ ] SESSION
+- [ ] SESSIONID
+- [ ] STATUS_LINE
+- [ ] STREAM_INPUT_BODY
+- [ ] STREAM_OUTPUT_BODY
+- [ ] TIME
+- [ ] TIME_DAY
+- [ ] TIME_EPOCH
+- [ ] TIME_HOUR
+- [ ] TIME_MIN
+- [ ] TIME_MON
+- [ ] TIME_SEC
+- [ ] TIME_WDAY
+- [ ] TIME_YEAR
+- [x] TX
+- [x] UNIQUE_ID
+- [ ] URLENCODED_ERROR
+- [ ] USERID
+- [ ] USERAGENT_IP
+- [ ] WEBAPPID
+- [ ] WEBSERVER_ERROR_LOG
+- [ ] XML
+
+## Transforms
+
+- [x] base64Decode
+- [ ] sqlHexDecode
+- [ ] base64DecodeExt
+- [ ] base64Encode
+- [ ] cmdLine
+- [ ] compressWhitespace
+- [ ] cssDecode
+- [ ] escapeSeqDecode
+- [ ] hexDecode
+- [x] hexEncode
+- [ ] htmlEntityDecode
+- [ ] jsDecode
+- [ ] length
+- [ ] lowercase
+- [ ] md5
+- [x] none
+- [ ] normalisePath
+- [ ] normalizePath
+- [ ] normalisePathWin
+- [ ] normalizePathWin
+- [ ] parityEven7bit
+- [ ] parityOdd7bit
+- [ ] parityZero7bit
+- [ ] removeNulls
+- [ ] removeWhitespace
+- [ ] replaceComments
+- [ ] removeCommentsChar
+- [ ] removeComments
+- [ ] replaceNulls
+- [ ] urlDecode
+- [ ] uppercase
+- [x] urlDecodeUni
+- [ ] urlEncode
+- [ ] utf8toUnicode
+- [x] sha1
+- [ ] trimLeft
+- [ ] trimRight
+- [ ] trim
+
+## Actions
+
+- [x] accuracy
+- [x] allow
+- [x] append
+- [x] auditlog
+- [ ] block
+- [x] capture
+- [x] chain
+- [/] ctl
+  - [ ] auditEngine
+  - [ ] auditLogParts
+  - [ ] debugLogLevel
+  - [x] forceRequestBodyVariable
+  - [ ] requestBodyAccess
+  - [ ] requestBodyLimit
+  - [x] requestBodyProcessor
+  - [ ] responseBodyAccess
+  - [ ] responseBodyLimit
+  - [x] ruleEngine
+  - [ ] ruleRemoveById
+  - [ ] ruleRemoveByMsg
+  - [ ] ruleRemoveByTag
+  - [ ] ruleRemoveTargetById
+  - [ ] ruleRemoveTargetByMsg
+  - [ ] ruleRemoveTargetByTag
+  - [ ] hashEngine
+  - [ ] hashEnforcement
+- [x] deny
+- [ ] deprecatevar
+- [ ] drop
+- [ ] exec
+- [ ] expirevar
+- [x] id
+- [x] initcol
+- [x] log
+- [ ] logdata
+- [ ] maturity
+- [x] msg
+- [ ] multiMatch
+- [x] noauditlog
+- [x] nolog
+- [x] pass
+- [ ] pause
+- [x] phase
+- [ ] prepend
+- [ ] proxy
+- [ ] redirect
+- [ ] rev
+- [ ] sanitiseArg
+- [ ] sanitiseMatched
+- [ ] sanitiseMatchedBytes
+- [ ] sanitiseRequestHeader
+- [ ] sanitiseResponseHeader
+- [x] severity
+- [ ] setuid
+- [ ] setrsc
+- [ ] setsid
+- [ ] setenv
+- [x] setvar
+- [ ] skip
+- [x] skipAfter
+- [x] status
+- [x] t
+- [x] tag
+- [x] ver
+- [ ] xmlns
+
+## Operators
+
+- [ ] beginsWith
+- [ ] contains
+- [ ] containsWord
+- [ ] detectSQLi
+- [ ] detectXSS
+- [ ] endsWith
+- [ ] fuzzyHash
+- [x] eq
+- [ ] ge
+- [ ] geoLookup
+- [ ] gsbLookup
+- [ ] gt
+- [ ] inspectFile
+- [ ] ipMatch
+- [ ] ipMatchF
+- [ ] ipMatchFromFile
+- [x] le
+- [x] lt
+- [ ] noMatch
+- [ ] pm
+- [ ] pmf
+- [ ] pmFromFile
+- [ ] rbl
+- [ ] rsub
+- [x] rx
+- [ ] streq
+- [ ] strmatch
+- [ ] unconditionalMatch
+- [ ] validateByteRange
+- [ ] validateDTD
+- [ ] validateHash
+- [ ] validateSchema
+- [ ] validateUrlEncoding
+- [ ] validateUtf8Encoding
+- [ ] verifyCC
+- [ ] verifyCPF
+- [ ] verifySSN
+- [ ] within

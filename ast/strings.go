@@ -1,83 +1,63 @@
 package ast
 
-import "github.com/alecthomas/participle/lexer"
-
-type String struct {
-	Pos lexer.Position
-
-	Unquoted     *UnquotedString     `( @@`
-	DoubleQuoted *DoubleQuotedString `| @@`
-	SingleQuoted *SingleQuotedString ` | @@)`
+//A ExpandableString expandable string is a string which may contain normal string parts and macros
+type ExpandableString struct {
+	AbstractNode
+	Parts []ExpandableStringPart
 }
 
-type UnquotedString struct {
-	Pos lexer.Position
-
-	Parts []*MacroExpandedStringPart `(@@)+`
+func (str *ExpandableString) Name() string {
+	return "expandable-string"
 }
 
-type SingleQuotedString struct {
-	Pos lexer.Position
-
-	String *MacroExpandedSingleQuotedString `SingleQuote @@ SingleQuote`
+func (str *ExpandableString) Children() []Node {
+	nodes := make([]Node, len(str.Parts))
+	for i, node := range str.Parts {
+		nodes[i] = Node(node)
+	}
+	return nodes
 }
 
-type DoubleQuotedString struct {
-	Pos lexer.Position
-
-	String *MacroExpandedDoubleQuotedString `DoubleQuote @@ DoubleQuote`
+type ExpandableStringPart interface {
+	Node
+	ExpandableStringPart()
 }
 
-type SingleQuotedStringValue struct {
-	Pos lexer.Position
+//A StringMacro defines a macro inside a string. Macros allow for using place holders in rules that will be expanded out to their values at runtime.
+//Format can be %{VARIABLE} or %{COLLECTION.VARIABLE}
+type StringMacro struct {
+	AbstractNode
 
-	Value string `@(Ident | Space | Exclamation | Punct | Number | Dot | Comma | Colon | ForwardSlash | Pipe | NumberSign | MacroExpansionStop | Amp | SemiColon | Equals | At | EscapedBackslash | EscapedForwardSlash | EscapedDoubleQuote | Increment | Other)+`
+	//The collection from where a variable is selected, optional
+	Collection string
+
+	//The variable name, required
+	Variable string
 }
 
-type DoubleQuotedStringValue struct {
-	Pos lexer.Position
-
-	Value string `@(Ident | Space | Exclamation | Punct | Number | Dot | Comma | Colon | ForwardSlash | Pipe | NumberSign | MacroExpansionStop | Amp | SemiColon | Equals | At | EscapedBackslash | EscapedForwardSlash | EscapedDoubleQuote | Increment | Other | SingleQuote | EscapedDoubleQuote)+`
+func (str *StringMacro) Name() string {
+	return "string-macro"
 }
 
-type StringValue struct {
-	Pos lexer.Position
-
-	Value string `@(Ident | Number )+`
+func (str *StringMacro) Children() []Node {
+	return []Node{}
 }
 
-type MacroExpandedSingleQuotedString struct {
-	Parts []*MacroExpandedSingleQuotedStringPart `(@@)+`
+func (str *StringMacro) ExpandableStringPart() {}
+
+//A StringPart is a part of a string which has no macro expansion
+type StringPart struct {
+	AbstractNode
+
+	Value string
 }
 
-type MacroExpandedDoubleQuotedString struct {
-	Parts []*MacroExpandedDoubleQuotedStringPart `(@@)+`
+func (str *StringPart) ExpandableStringPart() {}
+
+func (str *StringPart) Name() string {
+	return "string-part"
 }
 
-type MacroExpandedSingleQuotedStringPart struct {
-	Pos lexer.Position
-
-	MacroExpansion *MacroExpansion          `( @@`
-	String         *SingleQuotedStringValue ` | @@)`
-}
-
-type MacroExpandedDoubleQuotedStringPart struct {
-	Pos lexer.Position
-
-	MacroExpansion *MacroExpansion          `( @@`
-	String         *DoubleQuotedStringValue ` | @@)`
-}
-
-type MacroExpandedStringPart struct {
-	Pos lexer.Position
-
-	MacroExpansion *MacroExpansion `( @@`
-	String         *StringValue    ` | @@)`
-}
-
-type MacroExpansion struct {
-	Pos lexer.Position
-
-	Collection string `MacroExpansionStart @Ident (Dot`
-	Variable   string ` @(Ident | Number))? MacroExpansionStop`
+func (str *StringPart) Children() []Node {
+	return []Node{}
 }

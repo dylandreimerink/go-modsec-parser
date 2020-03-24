@@ -1,2 +1,8 @@
+# Editor config
+.vscode
+
 # A file which can be used for testing code while developing
 cmd/test/main.go
+
+# Comodo WAF rules which are licensed
+testdata/cwaf_rules_nginx_3-1.198
