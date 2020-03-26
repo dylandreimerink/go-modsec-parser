@@ -3,7 +3,7 @@
 This is a list of files in the current CRS version which are parsed by the parser. It is mainly here to keep track
 
 - [x] REQUEST-901-INITIALIZATION.conf
-- [ ] REQUEST-903.9001-DRUPAL-EXCLUSION-RULES.conf
+- [x] REQUEST-903.9001-DRUPAL-EXCLUSION-RULES.conf
 - [ ] REQUEST-903.9002-WORDPRESS-EXCLUSION-RULES.conf
 - [ ] REQUEST-903.9003-NEXTCLOUD-EXCLUSION-RULES.conf
 - [ ] REQUEST-903.9004-DOKUWIKI-EXCLUSION-RULES.conf

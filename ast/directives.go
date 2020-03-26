@@ -76,6 +76,39 @@ func (dir *DirectiveSecMarker) Children() []Node {
 	return []Node{}
 }
 
+//SecRequestBodyAccessValue is the value of the SecRequestBodyAccess directive
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-%28v2.x%29#SecRequestBodyAccess
+type SecRequestBodyAccessValue string
+
+const (
+	SecRequestBodyAccessOn  SecRequestBodyAccessValue = "On"
+	SecRequestBodyAccessOff SecRequestBodyAccessValue = "Off"
+)
+
+func (sev SecRequestBodyAccessValue) Valid() bool {
+	return sev == SecRequestBodyAccessOn ||
+		sev == SecRequestBodyAccessOff
+}
+
+//DirectiveSecRequestBodyAccessConfigures whether request bodies will be buffered and processed by ModSecurity.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-%28v2.x%29#SecRequestBodyAccess
+type DirectiveSecRequestBodyAccess struct {
+	AbstractNode
+	Value SecRequestBodyAccessValue
+}
+
+func (dir *DirectiveSecRequestBodyAccess) Name() string {
+	return "SecRequestBodyAccess"
+}
+
+//Directive is a marker to associate the struct with the Directive interface
+func (dir *DirectiveSecRequestBodyAccess) Directive() {}
+
+//Children returns all child nodes, this satisfies the Node interface
+func (dir *DirectiveSecRequestBodyAccess) Children() []Node {
+	return []Node{}
+}
+
 //DirectiveSecRule Creates a rule that will analyze the selected variables using the selected operator.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#secrule
 type DirectiveSecRule struct {

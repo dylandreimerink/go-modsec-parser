@@ -227,6 +227,75 @@ func (frbv *ActionCTLRequestBodyProcessor) Children() []Node {
 	return []Node{}
 }
 
+//ActionCTLRuleRemoveByID Removes a rule  at runtime.
+//It is similar to SecRuleRemoveById with the limitation that this ctl option only removes one rule or one range
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#SecRuleRemoveById
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ctl
+type ActionCTLRuleRemoveByID struct {
+	AbstractNode
+
+	StartID int
+	EndID   int
+}
+
+func (frbv *ActionCTLRuleRemoveByID) Name() string {
+	return "ruleRemoveByID"
+}
+
+//Directive is a marker to associate the struct with the Directive interface
+func (frbv *ActionCTLRuleRemoveByID) Directive() {}
+
+func (frbv *ActionCTLRuleRemoveByID) Children() []Node {
+	return []Node{}
+}
+
+//ActionCTLRuleRemoveTargetById Removes variables from a variable list of a rule at runtime.
+//It is similar to SecRuleUpdateTargetByID with the limitation that this ctl option can only remove targets and only does it for 1 target not multiple
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#SecRuleUpdateTargetById
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ctl
+type ActionCTLRuleRemoveTargetById struct {
+	AbstractNode
+
+	StartID            int
+	EndID              int
+	Variable           Variable
+	CollectionSelector VariableCollectionSelection
+}
+
+func (frbv *ActionCTLRuleRemoveTargetById) Name() string {
+	return "ruleRemoveTargetById"
+}
+
+//Directive is a marker to associate the struct with the Directive interface
+func (frbv *ActionCTLRuleRemoveTargetById) Directive() {}
+
+func (frbv *ActionCTLRuleRemoveTargetById) Children() []Node {
+	return []Node{frbv.Variable, frbv.CollectionSelector}
+}
+
+//ActionCTLRuleRemoveTargetByTag Removes variables from a variable list of a rules wit the given tag at runtime.
+//It is similar to SecRuleUpdateTargetByTag with the limitation that this ctl option can only remove targets and only does it for 1 target not multiple
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#SecRuleRemoveTargetByTag
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ctl
+type ActionCTLRuleRemoveTargetByTag struct {
+	AbstractNode
+
+	Tag                string
+	Variable           Variable
+	CollectionSelector VariableCollectionSelection
+}
+
+func (frbv *ActionCTLRuleRemoveTargetByTag) Name() string {
+	return "ruleRemoveTargetByTag"
+}
+
+//Directive is a marker to associate the struct with the Directive interface
+func (frbv *ActionCTLRuleRemoveTargetByTag) Directive() {}
+
+func (frbv *ActionCTLRuleRemoveTargetByTag) Children() []Node {
+	return []Node{frbv.Variable, frbv.CollectionSelector}
+}
+
 //ActionDeny Stops rule processing and intercepts transaction.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#deny
 type ActionDeny struct {

@@ -52,7 +52,7 @@
 - [ ] SecConnWriteStateLimit
 - [ ] SecRemoteRules
 - [ ] SecRemoteRulesFailAction
-- [ ] SecRequestBodyAccess
+- [x] SecRequestBodyAccess
 - [ ] SecRequestBodyInMemoryLimit
 - [ ] SecRequestBodyLimit
 - [ ] SecRequestBodyNoFilesLimit
@@ -146,13 +146,13 @@
 - [ ] REQUEST_BASENAME
 - [ ] REQUEST_BODY
 - [ ] REQUEST_BODY_LENGTH
-- [ ] REQUEST_COOKIES
-- [ ] REQUEST_COOKIES_NAMES
-- [ ] REQUEST_FILENAME
+- [x] REQUEST_COOKIES
+- [x] REQUEST_COOKIES_NAMES
+- [x] REQUEST_FILENAME
 - [x] REQUEST_HEADERS
 - [ ] REQUEST_HEADERS_NAMES
 - [ ] REQUEST_LINE
-- [ ] REQUEST_METHOD
+- [x] REQUEST_METHOD
 - [ ] REQUEST_PROTOCOL
 - [ ] REQUEST_URI
 - [ ] REQUEST_URI_RAW
@@ -253,18 +253,18 @@
   - [ ] auditLogParts
   - [ ] debugLogLevel
   - [x] forceRequestBodyVariable
-  - [ ] requestBodyAccess
+  - [x] requestBodyAccess
   - [ ] requestBodyLimit
   - [x] requestBodyProcessor
   - [ ] responseBodyAccess
   - [ ] responseBodyLimit
   - [x] ruleEngine
-  - [ ] ruleRemoveById
+  - [x] ruleRemoveById
   - [ ] ruleRemoveByMsg
   - [ ] ruleRemoveByTag
-  - [ ] ruleRemoveTargetById
+  - [x] ruleRemoveTargetById
   - [ ] ruleRemoveTargetByMsg
-  - [ ] ruleRemoveTargetByTag
+  - [x] ruleRemoveTargetByTag
   - [ ] hashEngine
   - [ ] hashEnforcement
 - [x] deny
@@ -310,17 +310,17 @@
 ## Operators
 
 - [ ] beginsWith
-- [ ] contains
+- [x] contains
 - [ ] containsWord
 - [ ] detectSQLi
 - [ ] detectXSS
-- [ ] endsWith
+- [x] endsWith
 - [ ] fuzzyHash
 - [x] eq
 - [ ] ge
 - [ ] geoLookup
 - [ ] gsbLookup
-- [ ] gt
+- [x] gt
 - [ ] inspectFile
 - [ ] ipMatch
 - [ ] ipMatchF
@@ -334,7 +334,7 @@
 - [ ] rbl
 - [ ] rsub
 - [x] rx
-- [ ] streq
+- [x] streq
 - [ ] strmatch
 - [ ] unconditionalMatch
 - [ ] validateByteRange

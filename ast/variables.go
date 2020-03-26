@@ -122,6 +122,27 @@ type Variable interface {
 	IsCollection() bool
 }
 
+//VariableArgs is a collection and can be used on its own (means all arguments including the POST Payload),
+// with a static parameter (matches arguments with that name),
+// or with a regular expression (matches all arguments with name that matches the regular expression).
+// To look at only the query string or body arguments, see the ARGS_GET and ARGS_POST collections.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ARGS
+type VariableArgs struct {
+	AbstractNode
+}
+
+func (v *VariableArgs) Name() string {
+	return "ARGS"
+}
+
+func (v *VariableArgs) IsCollection() bool {
+	return true
+}
+
+func (v *VariableArgs) Children() []Node {
+	return []Node{}
+}
+
 //VariableDuration Contains the number of milliseconds elapsed since the beginning of the current transaction.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#DURATION
 type VariableDuration struct {
@@ -158,6 +179,60 @@ func (v *VariableRequestBodyProcessor) Children() []Node {
 	return []Node{}
 }
 
+//VariableRequestCookies This variable is a collection of all of request cookies
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#request_cookies
+type VariableRequestCookies struct {
+	AbstractNode
+}
+
+func (v *VariableRequestCookies) Name() string {
+	return "REQUEST_COOKIES"
+}
+
+func (v *VariableRequestCookies) IsCollection() bool {
+	return true
+}
+
+func (v *VariableRequestCookies) Children() []Node {
+	return []Node{}
+}
+
+//VariableRequestCookiesNames This variable is a collection of the names of all request cookies
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#request_cookies_names
+type VariableRequestCookiesNames struct {
+	AbstractNode
+}
+
+func (v *VariableRequestCookiesNames) Name() string {
+	return "REQUEST_COOKIES_NAMES"
+}
+
+func (v *VariableRequestCookiesNames) IsCollection() bool {
+	return true
+}
+
+func (v *VariableRequestCookiesNames) Children() []Node {
+	return []Node{}
+}
+
+//VariableRequestFilename This variable holds the relative request URL without the query string part (e.g., /index.php).
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#request_cookies_names
+type VariableRequestFilename struct {
+	AbstractNode
+}
+
+func (v *VariableRequestFilename) Name() string {
+	return "REQUEST_FILENAME"
+}
+
+func (v *VariableRequestFilename) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRequestFilename) Children() []Node {
+	return []Node{}
+}
+
 //VariableRequestHeaders This variable can be used as either a collection of all of the request headers or can be used to inspect selected headers (by using the REQUEST_HEADERS:Header-Name syntax).
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#request_headers
 type VariableRequestHeaders struct {
@@ -173,6 +248,24 @@ func (v *VariableRequestHeaders) IsCollection() bool {
 }
 
 func (v *VariableRequestHeaders) Children() []Node {
+	return []Node{}
+}
+
+//VariableRequestMethod This variable holds the request method used in the transaction.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#REQUEST_METHOD
+type VariableRequestMethod struct {
+	AbstractNode
+}
+
+func (v *VariableRequestMethod) Name() string {
+	return "REQUEST_METHOD"
+}
+
+func (v *VariableRequestMethod) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRequestMethod) Children() []Node {
 	return []Node{}
 }
 
