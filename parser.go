@@ -596,11 +596,17 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 	case strings.ToLower((&ast.VariableArgs{}).Name()):
 		return &ast.VariableArgs{}, tokens[1:], nil
 
+	case strings.ToLower((&ast.VariableArgsNames{}).Name()):
+		return &ast.VariableArgsNames{}, tokens[1:], nil
+
 	case strings.ToLower((&ast.VariableDuration{}).Name()):
 		return &ast.VariableDuration{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableRequestBodyProcessor{}).Name()):
 		return &ast.VariableRequestBodyProcessor{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableRequestBody{}).Name()):
+		return &ast.VariableRequestBody{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableRequestCookies{}).Name()):
 		return &ast.VariableRequestCookies{}, tokens[1:], nil
@@ -1038,18 +1044,23 @@ func parseActionCTLRuleRemoveTargetByTag(tokens []item) (*ast.ActionCTLRuleRemov
 
 	option := &ast.ActionCTLRuleRemoveTargetByTag{}
 
-	if tokens[0].typ != itemIdent {
-		return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a rule ID", tokens[0].val, tokens[0].start)
-	}
+	for {
+		if len(tokens) == 0 || tokens[0].typ == itemArgumentStop {
+			return nil, tokens, fmt.Errorf("Missing tag name")
+		}
 
-	option.Tag = tokens[0].val
+		if tokens[0].typ == itemSemicolon {
+			tokens = tokens[1:]
+			break
+		}
 
-	if tokens[1].typ != itemSemicolon {
-		return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a semicolon", tokens[0].val, tokens[0].start)
+		option.Tag = option.Tag + tokens[0].val
+
+		tokens = tokens[1:]
 	}
 
 	var err error
-	option.Variable, tokens, err = parseVariable(tokens[2:])
+	option.Variable, tokens, err = parseVariable(tokens)
 	if err != nil {
 		return nil, tokens, err
 	}

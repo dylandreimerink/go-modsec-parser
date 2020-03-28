@@ -143,6 +143,24 @@ func (v *VariableArgs) Children() []Node {
 	return []Node{}
 }
 
+//VariableArgsNames Contains all request parameter names. You can search for specific parameter names that you want to inspect
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ARGS_NAMES
+type VariableArgsNames struct {
+	AbstractNode
+}
+
+func (v *VariableArgsNames) Name() string {
+	return "ARGS_NAMES"
+}
+
+func (v *VariableArgsNames) IsCollection() bool {
+	return true
+}
+
+func (v *VariableArgsNames) Children() []Node {
+	return []Node{}
+}
+
 //VariableDuration Contains the number of milliseconds elapsed since the beginning of the current transaction.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#DURATION
 type VariableDuration struct {
@@ -176,6 +194,27 @@ func (v *VariableRequestBodyProcessor) IsCollection() bool {
 }
 
 func (v *VariableRequestBodyProcessor) Children() []Node {
+	return []Node{}
+}
+
+//VariableRequestBody Holds the raw request body.
+// This variable is available only if the URLENCODED request body processor was used,
+// which will occur by default when the application/x-www-form-urlencoded content type is detected,
+// or if the use of the URLENCODED request body parser was forced.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#request_body
+type VariableRequestBody struct {
+	AbstractNode
+}
+
+func (v *VariableRequestBody) Name() string {
+	return "REQUEST_BODY"
+}
+
+func (v *VariableRequestBody) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRequestBody) Children() []Node {
 	return []Node{}
 }
 
