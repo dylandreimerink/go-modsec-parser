@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"net"
 	"strconv"
 	"strings"
 
@@ -337,6 +338,23 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 
 		operator = op
 
+	case strings.ToLower((&ast.OperatorIPMatch{}).Name()):
+		op := &ast.OperatorIPMatch{}
+
+		if tokens[1].typ == itemWhitespace {
+
+			var err error
+			op.IPs, tokens, err = parseIPMatchArgument(tokens[2:])
+			if err != nil {
+				return operator, tokens, err
+			}
+
+		} else {
+			return operator, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected operator argument", tokens[0].val, tokens[0].start)
+		}
+
+		operator = op
+
 	case strings.ToLower((&ast.OperatorLessThanOrEqual{}).Name()):
 		op := &ast.OperatorLessThanOrEqual{}
 
@@ -416,6 +434,56 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 	}
 
 	return operator, tokens, nil
+}
+
+func parseIPMatchArgument(tokens []item) ([]net.IPNet, []item, error) {
+	ips := []net.IPNet{}
+
+	var ipString string
+	for {
+		//If there are no more tokens, stop
+		if len(tokens) == 0 {
+			break
+		}
+
+		//If at end of argument or hit a seperator, parse the string
+		if tokens[0].typ == itemArgumentStop || tokens[0].typ == itemComma {
+			ip, ipNet, err := net.ParseCIDR(ipString)
+			if ip == nil {
+				ip = net.ParseIP(ipString)
+				if ip == nil {
+					return ips, tokens, fmt.Errorf("Unable to parse IP or CIDR at '%s': %w", tokens[0].start, err)
+				}
+
+				//Append the IP to the array with a mask of /32 or /128 depending on the IP family
+				if ip.To4() == nil {
+					ips = append(ips, net.IPNet{IP: ip, Mask: net.CIDRMask(128, 128)})
+				} else {
+					ips = append(ips, net.IPNet{IP: ip, Mask: net.CIDRMask(32, 32)})
+				}
+
+			} else {
+				ips = append(ips, *ipNet)
+			}
+
+			//If this was the last token in the argument, stop
+			if tokens[0].typ == itemArgumentStop {
+				tokens = tokens[1:]
+				break
+			}
+
+			//Else token zero is a comma which means we skip it, clear the current ip string and continue parsing
+			tokens = tokens[1:]
+			ipString = ""
+			continue
+		}
+
+		ipString = ipString + tokens[0].val
+
+		tokens = tokens[1:]
+	}
+
+	return ips, tokens, nil
 }
 
 func parseExpandableStringOperatorArgument(tokens []item) (*ast.ExpandableString, []item, error) {
@@ -596,11 +664,17 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 	case strings.ToLower((&ast.VariableArgs{}).Name()):
 		return &ast.VariableArgs{}, tokens[1:], nil
 
+	case strings.ToLower((&ast.VariableArgsCombinedSize{}).Name()):
+		return &ast.VariableArgsCombinedSize{}, tokens[1:], nil
+
 	case strings.ToLower((&ast.VariableArgsNames{}).Name()):
 		return &ast.VariableArgsNames{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableDuration{}).Name()):
 		return &ast.VariableDuration{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableRemoteAddress{}).Name()):
+		return &ast.VariableRemoteAddress{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableRequestBodyProcessor{}).Name()):
 		return &ast.VariableRequestBodyProcessor{}, tokens[1:], nil
@@ -619,6 +693,9 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 
 	case strings.ToLower((&ast.VariableRequestHeaders{}).Name()):
 		return &ast.VariableRequestHeaders{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableRequestLine{}).Name()):
+		return &ast.VariableRequestLine{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableRequestMethod{}).Name()):
 		return &ast.VariableRequestMethod{}, tokens[1:], nil
@@ -917,6 +994,22 @@ func parseActionCTL(tokens []item) (*ast.ActionCTL, []item, error) {
 
 		action.Option = option
 
+	case strings.ToLower((&ast.ActionCTLRuleRemoveByTag{}).Name()):
+		if tokens[3].typ != itemEquals {
+			return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a equals sign", tokens[3].val, tokens[3].start)
+		}
+
+		option := &ast.ActionCTLRuleRemoveByTag{}
+
+		var err error
+
+		option, tokens, err = parseActionCTLRuleRemoveByTag(tokens[4:])
+		if err != nil {
+			return nil, tokens, err
+		}
+
+		action.Option = option
+
 	case strings.ToLower((&ast.ActionCTLRuleRemoveTargetById{}).Name()):
 		if tokens[3].typ != itemEquals {
 			return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a equals sign", tokens[3].val, tokens[3].start)
@@ -1038,6 +1131,21 @@ func parseActionCTLRuleRemoveTargetById(tokens []item) (*ast.ActionCTLRuleRemove
 	}
 
 	return option, tokens, nil
+}
+
+func parseActionCTLRuleRemoveByTag(tokens []item) (*ast.ActionCTLRuleRemoveByTag, []item, error) {
+
+	option := &ast.ActionCTLRuleRemoveByTag{}
+
+	for {
+		if len(tokens) == 0 || tokens[0].typ == itemArgumentStop || tokens[0].typ == itemComma {
+			return option, tokens, nil
+		}
+
+		option.Regex = option.Regex + tokens[0].val
+
+		tokens = tokens[1:]
+	}
 }
 
 func parseActionCTLRuleRemoveTargetByTag(tokens []item) (*ast.ActionCTLRuleRemoveTargetByTag, []item, error) {

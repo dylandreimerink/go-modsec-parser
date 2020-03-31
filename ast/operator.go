@@ -1,5 +1,7 @@
 package ast
 
+import "net"
+
 type Operator interface {
 	Node
 
@@ -93,6 +95,24 @@ func (o *OperatorGreaterThan) Children() []Node {
 }
 
 func (o *OperatorGreaterThan) Operator() {}
+
+//OperatorIPMatch Performs a fast ipv4 or ipv6 match of REMOTE_ADDR variable data.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ipMatch
+type OperatorIPMatch struct {
+	AbstractOperator
+
+	IPs []net.IPNet
+}
+
+func (o *OperatorIPMatch) Name() string {
+	return "ipMatch"
+}
+
+func (o *OperatorIPMatch) Children() []Node {
+	return []Node{}
+}
+
+func (o *OperatorIPMatch) Operator() {}
 
 //OperatorLessThanOrEqual Performs numerical comparison and returns true if the input value is less than or equal to the operator parameter. Macro expansion is performed on the parameter string before comparison.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#le

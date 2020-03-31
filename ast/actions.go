@@ -249,6 +249,27 @@ func (frbv *ActionCTLRuleRemoveByID) Children() []Node {
 	return []Node{}
 }
 
+//ActionCTLRuleRemoveByTag Removes all rules at runtime for which a tag in that rule matches the regex.
+//It is similar to SecRuleRemoveByTag but works at runtime
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#SecRuleRemoveByTag
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ctl
+type ActionCTLRuleRemoveByTag struct {
+	AbstractNode
+
+	Regex string
+}
+
+func (frbv *ActionCTLRuleRemoveByTag) Name() string {
+	return "ruleRemoveByTag"
+}
+
+//Directive is a marker to associate the struct with the Directive interface
+func (frbv *ActionCTLRuleRemoveByTag) Directive() {}
+
+func (frbv *ActionCTLRuleRemoveByTag) Children() []Node {
+	return []Node{}
+}
+
 //ActionCTLRuleRemoveTargetById Removes variables from a variable list of a rule at runtime.
 //It is similar to SecRuleUpdateTargetByID with the limitation that this ctl option can only remove targets and only does it for 1 target not multiple
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#SecRuleUpdateTargetById

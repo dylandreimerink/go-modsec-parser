@@ -91,7 +91,7 @@
 ## Variables
 
 - [x] ARGS
-- [ ] ARGS_COMBINED_SIZE
+- [x] ARGS_COMBINED_SIZE
 - [ ] ARGS_GET
 - [ ] ARGS_GET_NAMES
 - [x] ARGS_NAMES
@@ -136,7 +136,7 @@
 - [ ] PERF_SREAD
 - [ ] PERF_SWRITE
 - [ ] QUERY_STRING
-- [ ] REMOTE_ADDR
+- [x] REMOTE_ADDR
 - [ ] REMOTE_HOST
 - [ ] REMOTE_PORT
 - [ ] REMOTE_USER
@@ -151,7 +151,7 @@
 - [x] REQUEST_FILENAME
 - [x] REQUEST_HEADERS
 - [ ] REQUEST_HEADERS_NAMES
-- [ ] REQUEST_LINE
+- [x] REQUEST_LINE
 - [x] REQUEST_METHOD
 - [ ] REQUEST_PROTOCOL
 - [ ] REQUEST_URI
@@ -261,7 +261,7 @@
   - [x] ruleEngine
   - [x] ruleRemoveById
   - [ ] ruleRemoveByMsg
-  - [ ] ruleRemoveByTag
+  - [x] ruleRemoveByTag
   - [x] ruleRemoveTargetById
   - [ ] ruleRemoveTargetByMsg
   - [x] ruleRemoveTargetByTag
@@ -322,7 +322,7 @@
 - [ ] gsbLookup
 - [x] gt
 - [ ] inspectFile
-- [ ] ipMatch
+- [x] ipMatch
 - [ ] ipMatchF
 - [ ] ipMatchFromFile
 - [x] le

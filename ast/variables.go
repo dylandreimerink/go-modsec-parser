@@ -143,6 +143,26 @@ func (v *VariableArgs) Children() []Node {
 	return []Node{}
 }
 
+//VariableArgsCombinedSize Contains the combined size of all request parameters.
+// Files are excluded from the calculation. This variable can be useful, for example,
+// to create a rule to ensure that the total size of the argument data is below a certain threshold.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ARGS_COMBINED_SIZE
+type VariableArgsCombinedSize struct {
+	AbstractNode
+}
+
+func (v *VariableArgsCombinedSize) Name() string {
+	return "ARGS_COMBINED_SIZE"
+}
+
+func (v *VariableArgsCombinedSize) IsCollection() bool {
+	return false
+}
+
+func (v *VariableArgsCombinedSize) Children() []Node {
+	return []Node{}
+}
+
 //VariableArgsNames Contains all request parameter names. You can search for specific parameter names that you want to inspect
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ARGS_NAMES
 type VariableArgsNames struct {
@@ -176,6 +196,24 @@ func (v *VariableDuration) IsCollection() bool {
 }
 
 func (v *VariableDuration) Children() []Node {
+	return []Node{}
+}
+
+//VariableRemoteAddress This variable holds the IP address of the remote client.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#REMOTE_ADDR
+type VariableRemoteAddress struct {
+	AbstractNode
+}
+
+func (v *VariableRemoteAddress) Name() string {
+	return "REMOTE_ADDR"
+}
+
+func (v *VariableRemoteAddress) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRemoteAddress) Children() []Node {
 	return []Node{}
 }
 
@@ -287,6 +325,24 @@ func (v *VariableRequestHeaders) IsCollection() bool {
 }
 
 func (v *VariableRequestHeaders) Children() []Node {
+	return []Node{}
+}
+
+//VariableRequestLine This variable holds the complete request line sent to the server (including the request method and HTTP version information).
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#REQUEST_LINE
+type VariableRequestLine struct {
+	AbstractNode
+}
+
+func (v *VariableRequestLine) Name() string {
+	return "REQUEST_LINE"
+}
+
+func (v *VariableRequestLine) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRequestLine) Children() []Node {
 	return []Node{}
 }
 
