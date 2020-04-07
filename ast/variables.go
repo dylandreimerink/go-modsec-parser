@@ -122,6 +122,25 @@ type Variable interface {
 	IsCollection() bool
 }
 
+//VariableCustomCollection is used to describe a variable which is not part of the Modsec config specification but is defined by the user.
+// Users can create custom collections using the initcol action. If we encounter a unknown variable name, we have to assume it is a custom collection
+type VariableCustomCollection struct {
+	AbstractNode
+	VariableName string
+}
+
+func (v *VariableCustomCollection) Name() string {
+	return v.VariableName
+}
+
+func (v *VariableCustomCollection) IsCollection() bool {
+	return true
+}
+
+func (v *VariableCustomCollection) Children() []Node {
+	return []Node{}
+}
+
 //VariableArgs is a collection and can be used on its own (means all arguments including the POST Payload),
 // with a static parameter (matches arguments with that name),
 // or with a regular expression (matches all arguments with name that matches the regular expression).
@@ -196,6 +215,24 @@ func (v *VariableDuration) IsCollection() bool {
 }
 
 func (v *VariableDuration) Children() []Node {
+	return []Node{}
+}
+
+//VariableGEO is a collection populated by the results of the last @geoLookup operator. The collection can be used to match geographical fields looked from an IP address or hostname.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#GEO
+type VariableGEO struct {
+	AbstractNode
+}
+
+func (v *VariableGEO) Name() string {
+	return "GEO"
+}
+
+func (v *VariableGEO) IsCollection() bool {
+	return true
+}
+
+func (v *VariableGEO) Children() []Node {
 	return []Node{}
 }
 

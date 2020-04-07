@@ -38,6 +38,35 @@ func (dir *DirectiveSecAction) AddAction(action Action) {
 	dir.ActionNodes = append(dir.ActionNodes, action)
 }
 
+//SecAuditEngineValue is the value of the DirectiveSecAuditEngine directive
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-%28v2.x%29#SecAuditEngine
+type SecAuditEngineValue string
+
+func (sev SecAuditEngineValue) Valid() bool {
+	return sev == ModsecOn ||
+		sev == ModsecOff ||
+		sev == ModsecRelevantOnly
+}
+
+//DirectiveSecAuditEngine Configures the audit logging engine.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-%28v2.x%29#SecAuditEngine
+type DirectiveSecAuditEngine struct {
+	AbstractNode
+	Value SecAuditEngineValue
+}
+
+func (dir *DirectiveSecAuditEngine) Name() string {
+	return "SecAuditEngine"
+}
+
+//Directive is a marker to associate the struct with the Directive interface
+func (dir *DirectiveSecAuditEngine) Directive() {}
+
+//Children returns all child nodes, this satisfies the Node interface
+func (dir *DirectiveSecAuditEngine) Children() []Node {
+	return []Node{}
+}
+
 //DirectiveSecComponentSignature Appends component signature to the ModSecurity signature.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-%28v2.x%29#seccomponentsignature
 type DirectiveSecComponentSignature struct {
@@ -148,16 +177,10 @@ func (dir *DirectiveSecRule) AddAction(action Action) {
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-%28v2.x%29#secruleengine
 type SecRuleEngineValue string
 
-const (
-	SecRuleEngineOn            SecRuleEngineValue = "On"
-	SecRuleEngineOff           SecRuleEngineValue = "Off"
-	SecRuleEngineDetectionOnly SecRuleEngineValue = "DetectionOnly"
-)
-
 func (sev SecRuleEngineValue) Valid() bool {
-	return sev == SecRuleEngineOn ||
-		sev == SecRuleEngineOff ||
-		sev == SecRuleEngineDetectionOnly
+	return sev == ModsecOn ||
+		sev == ModsecOff ||
+		sev == ModsecDetectionOnly
 }
 
 //DirectiveSecRuleEngine Configures the rules engine.

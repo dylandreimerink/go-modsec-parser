@@ -106,6 +106,24 @@ func (action *ActionAuditLog) Children() []Node {
 	return []Node{}
 }
 
+//ActionBlock Performs the disruptive action defined by the previous SecDefaultAction.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#block
+type ActionBlock struct {
+	AbstractNode
+}
+
+func (action *ActionBlock) Name() string {
+	return "block"
+}
+
+func (action *ActionBlock) ActionType() ActionType {
+	return ACTION_TYPE_DISRUPTIVE
+}
+
+func (action *ActionBlock) Children() []Node {
+	return []Node{}
+}
+
 //ActionCapture When used together with the regular expression operator (@rx), the capture action will create copies of the regular expression captures and place them into the transaction variable collection.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#capture
 type ActionCapture struct {
@@ -335,6 +353,33 @@ func (action *ActionDeny) Children() []Node {
 	return []Node{}
 }
 
+//ActionExpireVar Configures a collection variable to expire after the given time period (in seconds).
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#expirevar
+type ActionExpireVar struct {
+	AbstractNode
+
+	//The variable collection, optional
+	Collection *ExpandableString
+
+	//The name of the variable being modified, required
+	Variable *ExpandableString
+
+	//The amount of seconds after which the variable wil expire
+	TTL *ExpandableString
+}
+
+func (action *ActionExpireVar) Name() string {
+	return "expirevar"
+}
+
+func (action *ActionExpireVar) ActionType() ActionType {
+	return ACTION_TYPE_NON_DISRUPTIVE
+}
+
+func (action *ActionExpireVar) Children() []Node {
+	return []Node{action.Collection, action.Variable}
+}
+
 //ActionID  Assigns a unique ID to the rule or chain in which it appears.
 // Starting with ModSecurity 2.7 this action is mandatory and must be numeric.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#id
@@ -397,6 +442,25 @@ func (action *ActionLog) Children() []Node {
 	return []Node{}
 }
 
+//ActionLogData Logs a data fragment as part of the alert message.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#logdata
+type ActionLogData struct {
+	AbstractNode
+	Value *ExpandableString
+}
+
+func (action *ActionLogData) Name() string {
+	return "logdata"
+}
+
+func (action *ActionLogData) ActionType() ActionType {
+	return ACTION_TYPE_NON_DISRUPTIVE
+}
+
+func (action *ActionLogData) Children() []Node {
+	return []Node{action.Value}
+}
+
 //ActionMessage Assigns a custom message to the rule or chain in which it appears. The message will be logged along with every alert.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#msg
 type ActionMessage struct {
@@ -416,7 +480,7 @@ func (action *ActionMessage) Children() []Node {
 	return []Node{action.Value}
 }
 
-//ActionPass Indicates that a successful match of the rule should not be used as criteria to determine whether the transaction should be logged to the audit log.
+//ActionNoAuditLog Indicates that a successful match of the rule should not be used as criteria to determine whether the transaction should be logged to the audit log.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#noauditlog
 type ActionNoAuditLog struct {
 	AbstractNode

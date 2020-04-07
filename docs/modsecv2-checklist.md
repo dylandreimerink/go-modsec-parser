@@ -4,7 +4,7 @@
 
 - [x] SecAction
 - [ ] SecArgumentSeparator
-- [ ] SecAuditEngine
+- [x] SecAuditEngine
 - [ ] SecAuditLog
 - [ ] SecAuditLog2
 - [ ] SecAuditLogDirMode
@@ -108,7 +108,7 @@
 - [ ] FILES_SIZES
 - [ ] FILES_TMPNAMES
 - [ ] FILES_TMP_CONTENT
-- [ ] GEO
+- [x] GEO
 - [ ] HIGHEST_SEVERITY
 - [ ] INBOUND_DATA_ERROR
 - [ ] MATCHED_VAR
@@ -245,11 +245,11 @@
 - [x] allow
 - [x] append
 - [x] auditlog
-- [ ] block
+- [x] block
 - [x] capture
 - [x] chain
 - [/] ctl
-  - [ ] auditEngine
+  - [x] auditEngine
   - [ ] auditLogParts
   - [ ] debugLogLevel
   - [x] forceRequestBodyVariable
@@ -271,11 +271,11 @@
 - [ ] deprecatevar
 - [ ] drop
 - [ ] exec
-- [ ] expirevar
+- [x] expirevar
 - [x] id
 - [x] initcol
 - [x] log
-- [ ] logdata
+- [x] logdata
 - [ ] maturity
 - [x] msg
 - [ ] multiMatch
@@ -318,7 +318,7 @@
 - [ ] fuzzyHash
 - [x] eq
 - [ ] ge
-- [ ] geoLookup
+- [x] geoLookup
 - [ ] gsbLookup
 - [x] gt
 - [ ] inspectFile
@@ -331,7 +331,7 @@
 - [ ] pm
 - [ ] pmf
 - [ ] pmFromFile
-- [ ] rbl
+- [x] rbl
 - [ ] rsub
 - [x] rx
 - [x] streq
@@ -346,4 +346,4 @@
 - [ ] verifyCC
 - [ ] verifyCPF
 - [ ] verifySSN
-- [ ] within
+- [x] within

@@ -78,6 +78,22 @@ func (o *OperatorEquals) Children() []Node {
 
 func (o *OperatorEquals) Operator() {}
 
+//OperatorGeoLookup performs a geolocation lookup using the IP address in input against the geolocation database previously configured using SecGeoLookupDb. If the lookup is successful, the obtained information is captured in the GEO collection.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#geoLookup
+type OperatorGeoLookup struct {
+	AbstractOperator
+}
+
+func (o *OperatorGeoLookup) Name() string {
+	return "geoLookup"
+}
+
+func (o *OperatorGeoLookup) Children() []Node {
+	return []Node{}
+}
+
+func (o *OperatorGeoLookup) Operator() {}
+
 //OperatorGreaterThan Performs numerical comparison and returns true if the input value is greater than the operator parameter. Macro expansion is performed on the parameter string before comparison.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#gt
 type OperatorGreaterThan struct {
@@ -150,6 +166,24 @@ func (o *OperatorLessThan) Children() []Node {
 
 func (o *OperatorLessThan) Operator() {}
 
+//OperatorRBL Looks up the input value in the RBL (real-time block list) given as parameter. The parameter can be an IPv4 address or a hostname.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#rbl
+type OperatorRBL struct {
+	AbstractOperator
+
+	Value string
+}
+
+func (o *OperatorRBL) Name() string {
+	return "rbl"
+}
+
+func (o *OperatorRBL) Children() []Node {
+	return []Node{}
+}
+
+func (o *OperatorRBL) Operator() {}
+
 //OperatorRegex Performs a regular expression match of the pattern provided as parameter. This is the default operator; the rules that do not explicitly specify an operator default to @rx.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#rx
 type OperatorRegex struct {
@@ -185,3 +219,21 @@ func (o *OperatorStreq) Children() []Node {
 }
 
 func (o *OperatorStreq) Operator() {}
+
+//OperatorWithin Returns true if the input value (the needle) is found anywhere within the @within parameter (the haystack). Macro expansion is performed on the parameter string before comparison.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#within
+type OperatorWithin struct {
+	AbstractOperator
+
+	Value *ExpandableString
+}
+
+func (o *OperatorWithin) Name() string {
+	return "within"
+}
+
+func (o *OperatorWithin) Children() []Node {
+	return []Node{o.Value}
+}
+
+func (o *OperatorWithin) Operator() {}

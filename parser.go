@@ -126,6 +126,19 @@ func parseDirective(tokens []item) (ast.Directive, []item, error) {
 
 		secRuleEngine.Value, tokens, err = parseDirectiveSecRuleEngineValue(tokens[1:])
 		directive = secRuleEngine
+
+	case strings.ToLower((&ast.DirectiveSecAuditEngine{}).Name()):
+		secAuditEngine := &ast.DirectiveSecAuditEngine{}
+
+		//Consume all tokens until the start of the first argument
+		tokens = tokens[1:]
+		for tokens[0].typ != itemArgumentStart {
+			tokens = tokens[1:]
+		}
+
+		secAuditEngine.Value, tokens, err = parseDirectiveSecAuditEngineValue(tokens[1:])
+		directive = secAuditEngine
+
 	default:
 		return nil, tokens, fmt.Errorf("Unknown directive '%s' at '%s'", tokens[0].val, tokens[0].start)
 	}
@@ -146,16 +159,32 @@ func parseDirectiveSecRequestBodyAccessValue(tokens []item) (ast.SecRequestBodyA
 	}
 }
 
+func parseDirectiveSecAuditEngineValue(tokens []item) (ast.SecAuditEngineValue, []item, error) {
+	switch strings.ToLower(tokens[0].val) {
+	case strings.ToLower(string(ast.ModsecOn)):
+		return ast.SecAuditEngineValue(ast.ModsecOn), tokens[1:], nil
+
+	case strings.ToLower(string(ast.ModsecOff)):
+		return ast.SecAuditEngineValue(ast.ModsecOff), tokens[1:], nil
+
+	case strings.ToLower(string(ast.ModsecRelevantOnly)):
+		return ast.SecAuditEngineValue(ast.ModsecRelevantOnly), tokens[1:], nil
+
+	default:
+		return ast.SecAuditEngineValue(""), tokens, fmt.Errorf("Unknown SecAuditEngine value '%s' at '%s'", tokens[0].val, tokens[0].start)
+	}
+}
+
 func parseDirectiveSecRuleEngineValue(tokens []item) (ast.SecRuleEngineValue, []item, error) {
 	switch strings.ToLower(tokens[0].val) {
-	case strings.ToLower(string(ast.SecRuleEngineOn)):
-		return ast.SecRuleEngineOn, tokens[1:], nil
+	case strings.ToLower(string(ast.ModsecOn)):
+		return ast.SecRuleEngineValue(ast.ModsecOn), tokens[1:], nil
 
-	case strings.ToLower(string(ast.SecRuleEngineOff)):
-		return ast.SecRuleEngineOff, tokens[1:], nil
+	case strings.ToLower(string(ast.ModsecOff)):
+		return ast.SecRuleEngineValue(ast.ModsecOff), tokens[1:], nil
 
-	case strings.ToLower(string(ast.SecRuleEngineDetectionOnly)):
-		return ast.SecRuleEngineDetectionOnly, tokens[1:], nil
+	case strings.ToLower(string(ast.ModsecDetectionOnly)):
+		return ast.SecRuleEngineValue(ast.ModsecDetectionOnly), tokens[1:], nil
 
 	default:
 		return ast.SecRuleEngineValue(""), tokens, fmt.Errorf("Unknown SecRuleEngine value '%s' at '%s'", tokens[0].val, tokens[0].start)
@@ -218,6 +247,11 @@ func parseDirectiveSecRule(tokens []item) (*ast.DirectiveSecRule, []item, error)
 	rule.Operator, tokens, err = parseSecRuleOperator(tokens)
 	if err != nil {
 		return nil, tokens, err
+	}
+
+	//Actions are optional. So if there is no start of the third argument this is it
+	if tokens[0].typ != itemArgumentStart {
+		return rule, tokens, nil
 	}
 
 	rule.ActionNodes, tokens, err = parseActionList(tokens)
@@ -321,6 +355,10 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 		}
 
 		operator = op
+	case strings.ToLower((&ast.OperatorGeoLookup{}).Name()):
+		op := &ast.OperatorGeoLookup{}
+		tokens = tokens[2:]
+		operator = op
 	case strings.ToLower((&ast.OperatorGreaterThan{}).Name()):
 		op := &ast.OperatorGreaterThan{}
 
@@ -388,6 +426,27 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 		}
 
 		operator = op
+	case strings.ToLower((&ast.OperatorRBL{}).Name()):
+		op := &ast.OperatorRBL{}
+		if tokens[1].typ == itemWhitespace {
+			tokens = tokens[2:]
+			for {
+				if len(tokens) == 0 {
+					break
+				}
+
+				if tokens[0].typ == itemArgumentStop {
+					tokens = tokens[1:]
+					break
+				}
+
+				op.Value += tokens[0].val
+				tokens = tokens[1:]
+			}
+		} else {
+			return operator, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected operator argument", tokens[0].val, tokens[0].start)
+		}
+		operator = op
 	case strings.ToLower((&ast.OperatorRegex{}).Name()):
 		regexOp := &ast.OperatorRegex{}
 		if tokens[1].typ == itemWhitespace {
@@ -411,6 +470,22 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 		operator = regexOp
 	case strings.ToLower((&ast.OperatorStreq{}).Name()):
 		op := &ast.OperatorStreq{}
+
+		if tokens[1].typ == itemWhitespace {
+
+			var err error
+			op.Value, tokens, err = parseExpandableStringOperatorArgument(tokens[2:])
+			if err != nil {
+				return operator, tokens, err
+			}
+
+		} else {
+			return operator, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected operator argument", tokens[0].val, tokens[0].start)
+		}
+
+		operator = op
+	case strings.ToLower((&ast.OperatorWithin{}).Name()):
+		op := &ast.OperatorWithin{}
 
 		if tokens[1].typ == itemWhitespace {
 
@@ -673,6 +748,9 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 	case strings.ToLower((&ast.VariableDuration{}).Name()):
 		return &ast.VariableDuration{}, tokens[1:], nil
 
+	case strings.ToLower((&ast.VariableGEO{}).Name()):
+		return &ast.VariableGEO{}, tokens[1:], nil
+
 	case strings.ToLower((&ast.VariableRemoteAddress{}).Name()):
 		return &ast.VariableRemoteAddress{}, tokens[1:], nil
 
@@ -705,6 +783,20 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 
 	case strings.ToLower((&ast.VariableUniqueID{}).Name()):
 		return &ast.VariableUniqueID{}, tokens[1:], nil
+	}
+
+	//Assume the variable is a custom collection
+	//TODO remove whitelist when all variables in the spec have been implemented
+
+	//A whitelist of variables of which we know they are custom collections in the CRS
+	// we use this while developing so we trigger errors if the variable name is unknown
+	whitelist := []string{"IP"}
+	for _, name := range whitelist {
+		if strings.ToLower(tokens[0].val) == strings.ToLower(name) {
+			return &ast.VariableCustomCollection{
+				VariableName: strings.ToUpper(tokens[0].val),
+			}, tokens[1:], nil
+		}
 	}
 
 	return nil, tokens, fmt.Errorf("Unknown variable name '%s' at '%s'", tokens[0].val, tokens[0].start)
@@ -767,6 +859,10 @@ func parseAction(tokens []item) (ast.Action, []item, error) {
 		action = &ast.ActionAuditLog{}
 		tokens = tokens[1:]
 
+	case (&ast.ActionBlock{}).Name():
+		action = &ast.ActionBlock{}
+		tokens = tokens[1:]
+
 	case (&ast.ActionCapture{}).Name():
 		action = &ast.ActionCapture{}
 		tokens = tokens[1:]
@@ -782,6 +878,9 @@ func parseAction(tokens []item) (ast.Action, []item, error) {
 		action = &ast.ActionDeny{}
 		tokens = tokens[1:]
 
+	case (&ast.ActionExpireVar{}).Name():
+		action, tokens, err = parseActionExpireVar(tokens)
+
 	case (&ast.ActionID{}).Name():
 		action, tokens, err = parseActionID(tokens)
 
@@ -791,6 +890,9 @@ func parseAction(tokens []item) (ast.Action, []item, error) {
 	case (&ast.ActionLog{}).Name():
 		action = &ast.ActionLog{}
 		tokens = tokens[1:]
+
+	case (&ast.ActionLogData{}).Name():
+		action, tokens, err = parseActionLogData(tokens)
 
 	case (&ast.ActionMessage{}).Name():
 		action, tokens, err = parseActionMessage(tokens)
@@ -836,6 +938,22 @@ func parseAction(tokens []item) (ast.Action, []item, error) {
 	}
 
 	return action, tokens, err
+}
+
+func parseActionLogData(tokens []item) (*ast.ActionLogData, []item, error) {
+	action := &ast.ActionLogData{}
+
+	if tokens[1].typ != itemColon {
+		return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a colon", tokens[1].val, tokens[1].start)
+	}
+
+	var err error
+	action.Value, tokens, err = parseExpandableStringActionArgument(tokens[2:])
+	if err != nil {
+		return action, tokens, err
+	}
+
+	return action, tokens, nil
 }
 
 func parseActionMessage(tokens []item) (*ast.ActionMessage, []item, error) {
@@ -910,6 +1028,21 @@ func parseActionCTL(tokens []item) (*ast.ActionCTL, []item, error) {
 	}
 
 	switch strings.ToLower(tokens[2].val) {
+	case strings.ToLower("auditEngine"):
+		if tokens[3].typ != itemEquals {
+			return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a equals sign", tokens[3].val, tokens[3].start)
+		}
+
+		option := &ast.DirectiveSecAuditEngine{}
+
+		var err error
+		option.Value, tokens, err = parseDirectiveSecAuditEngineValue(tokens[4:])
+		if err != nil {
+			return nil, tokens, err
+		}
+
+		action.Option = option
+
 	case strings.ToLower((&ast.ActionCTLForceRequestBodyVariable{}).Name()):
 		if tokens[3].typ != itemEquals {
 			return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a equals sign", tokens[3].val, tokens[3].start)
@@ -1575,6 +1708,120 @@ func parseActionInitcol(tokens []item) (*ast.ActionInitcol, []item, error) {
 			action.Modifier.Parts = append(action.Modifier.Parts, part)
 		} else {
 			action.Collection.Parts = append(action.Collection.Parts, part)
+		}
+	}
+
+	return action, tokens[consumedTokens:], nil
+}
+
+func parseActionExpireVar(tokens []item) (*ast.ActionExpireVar, []item, error) {
+	action := &ast.ActionExpireVar{}
+
+	action.Variable = &ast.ExpandableString{}
+	action.Variable.SetParent(action)
+
+	var err error
+
+	if tokens[1].typ != itemColon {
+		return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a colon", tokens[1].val, tokens[1].start)
+	}
+
+	actionValueTokens := []item{}
+
+	//The action name + the colon
+	consumedTokens := 2
+
+	//If the first token is a single quote, all tokens until the next single quote are part of the action value
+	if tokens[2].typ == itemSingleQuote {
+		for _, token := range tokens[3:] {
+			if token.typ == itemSingleQuote {
+				break
+			}
+
+			actionValueTokens = append(actionValueTokens, token)
+		}
+
+		//TODO handle non existant second single quote
+
+		//Two single quotes
+		consumedTokens += 2
+	} else {
+		//all tokens until the next comma are part of the action value
+		for _, token := range tokens[2:] {
+			if token.typ == itemComma {
+				break
+			}
+
+			actionValueTokens = append(actionValueTokens, token)
+		}
+	}
+
+	consumedTokens += len(actionValueTokens)
+
+	seenEquals := false
+
+	for {
+		if len(actionValueTokens) == 0 {
+			break
+		}
+
+		var part ast.ExpandableStringPart
+
+		//If the token is % it indicates a string macro
+		switch actionValueTokens[0].typ {
+		case itemPercent:
+			part, actionValueTokens, err = parseStringMacro(actionValueTokens)
+			if err != nil {
+				return nil, tokens, err
+			}
+		case itemDot:
+
+			if action.Collection == nil {
+				action.Collection = &ast.ExpandableString{}
+				action.Collection.SetParent(action)
+			}
+
+			//If there is no collection, this dot indicates that all we have parsed before was part of the collection not the variable
+			if len(action.Collection.Parts) == 0 {
+				//Move parts from variable to collection
+				for _, part := range action.Variable.Parts {
+					action.Collection.Parts = append(action.Collection.Parts, part)
+				}
+
+				//shrink slice to 0
+				action.Variable.Parts = action.Variable.Parts[:0]
+			} else {
+				part = &ast.StringPart{Value: actionValueTokens[0].val}
+			}
+
+			actionValueTokens = actionValueTokens[1:]
+
+			//There is no string part on this iteration, so continue the loop
+			continue
+		case itemEquals:
+
+			seenEquals = true
+
+			actionValueTokens = actionValueTokens[1:]
+
+			//There is no string part on this iteration, so continue the loop
+			continue
+		default:
+
+			//If the token has no special meaning in this context, add it as a plain string part
+			part = &ast.StringPart{Value: actionValueTokens[0].val}
+			actionValueTokens = actionValueTokens[1:]
+		}
+
+		if !seenEquals {
+			action.Variable.Parts = append(action.Variable.Parts, part)
+		} else {
+			if action.TTL == nil {
+				action.TTL = &ast.ExpandableString{}
+				action.TTL.SetParent(action)
+			}
+
+			action.TTL.Parts = append(action.TTL.Parts, part)
 		}
 	}
 
