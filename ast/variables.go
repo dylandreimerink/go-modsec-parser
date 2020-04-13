@@ -182,6 +182,42 @@ func (v *VariableArgsCombinedSize) Children() []Node {
 	return []Node{}
 }
 
+//VariableArgsGet is similar to ARGS, but contains only query string parameters.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ARGS_GET
+type VariableArgsGet struct {
+	AbstractNode
+}
+
+func (v *VariableArgsGet) Name() string {
+	return "ARGS_GET"
+}
+
+func (v *VariableArgsGet) IsCollection() bool {
+	return true
+}
+
+func (v *VariableArgsGet) Children() []Node {
+	return []Node{}
+}
+
+//VariableArgsGetNames is similar to ARGS_NAMES, but contains only the names of query string parameters.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ARGS_GET_NAMES
+type VariableArgsGetNames struct {
+	AbstractNode
+}
+
+func (v *VariableArgsGetNames) Name() string {
+	return "ARGS_GET_NAMES"
+}
+
+func (v *VariableArgsGetNames) IsCollection() bool {
+	return true
+}
+
+func (v *VariableArgsGetNames) Children() []Node {
+	return []Node{}
+}
+
 //VariableArgsNames Contains all request parameter names. You can search for specific parameter names that you want to inspect
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ARGS_NAMES
 type VariableArgsNames struct {
@@ -290,6 +326,24 @@ func (v *VariableGEO) Children() []Node {
 	return []Node{}
 }
 
+//VariableMatchedVarsNames Similar to MATCHED_VAR_NAME except that it is a collection of all matches for the current operator check.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#MATCHED_VARS_NAMES
+type VariableMatchedVarsNames struct {
+	AbstractNode
+}
+
+func (v *VariableMatchedVarsNames) Name() string {
+	return "MATCHED_VARS_NAMES"
+}
+
+func (v *VariableMatchedVarsNames) IsCollection() bool {
+	return true
+}
+
+func (v *VariableMatchedVarsNames) Children() []Node {
+	return []Node{}
+}
+
 //VariableMultipartStructError MULTIPART_STRICT_ERROR will be set to 1 when any of the following variables is also set to 1:
 // REQBODY_PROCESSOR_ERROR, MULTIPART_BOUNDARY_QUOTED, MULTIPART_BOUNDARY_WHITESPACE, MULTIPART_DATA_BEFORE,
 // MULTIPART_DATA_AFTER, MULTIPART_HEADER_FOLDING, MULTIPART_LF_LINE, MULTIPART_MISSING_SEMICOLON MULTIPART_INVALID_QUOTING MULTIPART_INVALID_HEADER_FOLDING MULTIPART_FILE_LIMIT_EXCEEDED.
@@ -310,6 +364,24 @@ func (v *VariableMultipartStructError) IsCollection() bool {
 }
 
 func (v *VariableMultipartStructError) Children() []Node {
+	return []Node{}
+}
+
+//VariableQueryString Contains the query string part of a request URI. The value in QUERY_STRING is always provided raw, without URL decoding taking place.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#QUERY_STRING
+type VariableQueryString struct {
+	AbstractNode
+}
+
+func (v *VariableQueryString) Name() string {
+	return "QUERY_STRING"
+}
+
+func (v *VariableQueryString) IsCollection() bool {
+	return false
+}
+
+func (v *VariableQueryString) Children() []Node {
 	return []Node{}
 }
 
@@ -567,6 +639,24 @@ func (v *VariableRequestURI) IsCollection() bool {
 }
 
 func (v *VariableRequestURI) Children() []Node {
+	return []Node{}
+}
+
+//VariableRequestURIRaw Same as REQUEST_URI but will contain the domain name if it was provided on the request line (e.g., http://www.example.com/index.php?p=X).
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#REQUEST_URI_RAW
+type VariableRequestURIRaw struct {
+	AbstractNode
+}
+
+func (v *VariableRequestURIRaw) Name() string {
+	return "REQUEST_URI_RAW"
+}
+
+func (v *VariableRequestURIRaw) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRequestURIRaw) Children() []Node {
 	return []Node{}
 }
 

@@ -21,6 +21,22 @@ func (t *TransformBase64Decode) Children() []Node {
 
 func (t *TransformBase64Decode) Transform() {}
 
+//TransformCMDLine In Windows and Unix, commands may be escaped by different means. See reference manual for more details
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#cmdline
+type TransformCMDLine struct {
+	AbstractNode
+}
+
+func (t *TransformCMDLine) Name() string {
+	return "cmdLine"
+}
+
+func (t *TransformCMDLine) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformCMDLine) Transform() {}
+
 //TransformHexEncode Encodes string (possibly containing binary characters) by replacing each input byte with two hexadecimal characters. For example, xyz is encoded as 78797a.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#hexencode
 type TransformHexEncode struct {
@@ -110,6 +126,38 @@ func (t *TransformNone) Children() []Node {
 
 func (t *TransformNone) Transform() {}
 
+//TransformNormalizePathWin Same as normalizePath, but first converts backslash characters to forward slashes.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#normalizePathWin
+type TransformNormalizePathWin struct {
+	AbstractNode
+}
+
+func (t *TransformNormalizePathWin) Name() string {
+	return "normalizePathWin"
+}
+
+func (t *TransformNormalizePathWin) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformNormalizePathWin) Transform() {}
+
+//TransformRemoteNulls Removes all NUL bytes from input.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#removeNulls
+type TransformRemoteNulls struct {
+	AbstractNode
+}
+
+func (t *TransformRemoteNulls) Name() string {
+	return "removeNulls"
+}
+
+func (t *TransformRemoteNulls) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformRemoteNulls) Transform() {}
+
 //TransformUrlDecodeUni Like urlDecode, but with support for the Microsoft-specific %u encoding. If the code is in the range of FF01-FF5E (the full-width ASCII codes), then the higher byte is used to detect and adjust the lower byte. Otherwise, only the lower byte will be used and the higher byte zeroed.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#urlDecodeUni
 type TransformUrlDecodeUni struct {
@@ -125,6 +173,22 @@ func (t *TransformUrlDecodeUni) Children() []Node {
 }
 
 func (t *TransformUrlDecodeUni) Transform() {}
+
+//TransformUTF8ToUnicode Converts all UTF-8 characters sequences to Unicode. This help input normalization specially for non-english languages minimizing false-positives and false-negatives. (available with 2.7.0)
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#utf8toUnicode
+type TransformUTF8ToUnicode struct {
+	AbstractNode
+}
+
+func (t *TransformUTF8ToUnicode) Name() string {
+	return "utf8toUnicode"
+}
+
+func (t *TransformUTF8ToUnicode) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformUTF8ToUnicode) Transform() {}
 
 //TransformSHA1 Calculates a SHA1 hash from the input string. The computed hash is in a raw binary form and may need encoded into text to be printed (or logged). Hash functions are commonly used in combination with hexEncode (for example, t:sha1,t:hexEncode).
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#sha1

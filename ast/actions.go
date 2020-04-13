@@ -543,6 +543,24 @@ func (action *ActionMessage) Children() []Node {
 	return []Node{action.Value}
 }
 
+//ActionMultiMatch If enabled, ModSecurity will perform multiple operator invocations for every target, before and after every anti-evasion transformation is performed.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#multiMatch
+type ActionMultiMatch struct {
+	AbstractNode
+}
+
+func (action *ActionMultiMatch) Name() string {
+	return "multimatch"
+}
+
+func (action *ActionMultiMatch) ActionType() ActionType {
+	return ACTION_TYPE_NON_DISRUPTIVE
+}
+
+func (action *ActionMultiMatch) Children() []Node {
+	return []Node{}
+}
+
 //ActionNoAuditLog Indicates that a successful match of the rule should not be used as criteria to determine whether the transaction should be logged to the audit log.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#noauditlog
 type ActionNoAuditLog struct {

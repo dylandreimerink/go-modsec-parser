@@ -92,8 +92,8 @@
 
 - [x] ARGS
 - [x] ARGS_COMBINED_SIZE
-- [ ] ARGS_GET
-- [ ] ARGS_GET_NAMES
+- [x] ARGS_GET
+- [x] ARGS_GET_NAMES
 - [x] ARGS_NAMES
 - [ ] ARGS_POST
 - [ ] ARGS_POST_NAMES
@@ -114,7 +114,7 @@
 - [ ] MATCHED_VAR
 - [ ] MATCHED_VARS
 - [ ] MATCHED_VAR_NAME
-- [ ] MATCHED_VARS_NAMES
+- [x] MATCHED_VARS_NAMES
 - [ ] MODSEC_BUILD
 - [ ] MULTIPART_CRLF_LF_LINES
 - [ ] MULTIPART_FILENAME
@@ -135,7 +135,7 @@
 - [ ] PERF_RULES
 - [ ] PERF_SREAD
 - [ ] PERF_SWRITE
-- [ ] QUERY_STRING
+- [x] QUERY_STRING
 - [x] REMOTE_ADDR
 - [ ] REMOTE_HOST
 - [ ] REMOTE_PORT
@@ -155,7 +155,7 @@
 - [x] REQUEST_METHOD
 - [x] REQUEST_PROTOCOL
 - [x] REQUEST_URI
-- [ ] REQUEST_URI_RAW
+- [x] REQUEST_URI_RAW
 - [ ] RESPONSE_BODY
 - [ ] RESPONSE_CONTENT_LENGTH
 - [ ] RESPONSE_CONTENT_TYPE
@@ -204,7 +204,7 @@
 - [ ] sqlHexDecode
 - [ ] base64DecodeExt
 - [ ] base64Encode
-- [ ] cmdLine
+- [x] cmdLine
 - [ ] compressWhitespace
 - [ ] cssDecode
 - [ ] escapeSeqDecode
@@ -219,11 +219,11 @@
 - [ ] normalisePath
 - [ ] normalizePath
 - [ ] normalisePathWin
-- [ ] normalizePathWin
+- [x] normalizePathWin
 - [ ] parityEven7bit
 - [ ] parityOdd7bit
 - [ ] parityZero7bit
-- [ ] removeNulls
+- [x] removeNulls
 - [ ] removeWhitespace
 - [ ] replaceComments
 - [ ] removeCommentsChar
@@ -233,7 +233,7 @@
 - [ ] uppercase
 - [x] urlDecodeUni
 - [ ] urlEncode
-- [ ] utf8toUnicode
+- [x] utf8toUnicode
 - [x] sha1
 - [ ] trimLeft
 - [ ] trimRight
@@ -278,7 +278,7 @@
 - [x] logdata
 - [ ] maturity
 - [x] msg
-- [ ] multiMatch
+- [x] multiMatch
 - [x] noauditlog
 - [x] nolog
 - [x] pass

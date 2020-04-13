@@ -909,6 +909,12 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 	case strings.ToLower((&ast.VariableArgsCombinedSize{}).Name()):
 		return &ast.VariableArgsCombinedSize{}, tokens[1:], nil
 
+	case strings.ToLower((&ast.VariableArgsGet{}).Name()):
+		return &ast.VariableArgsGet{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableArgsGetNames{}).Name()):
+		return &ast.VariableArgsGetNames{}, tokens[1:], nil
+
 	case strings.ToLower((&ast.VariableArgsNames{}).Name()):
 		return &ast.VariableArgsNames{}, tokens[1:], nil
 
@@ -927,8 +933,14 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 	case strings.ToLower((&ast.VariableGEO{}).Name()):
 		return &ast.VariableGEO{}, tokens[1:], nil
 
+	case strings.ToLower((&ast.VariableMatchedVarsNames{}).Name()):
+		return &ast.VariableMatchedVarsNames{}, tokens[1:], nil
+
 	case strings.ToLower((&ast.VariableMultipartStructError{}).Name()):
 		return &ast.VariableMultipartStructError{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableQueryString{}).Name()):
+		return &ast.VariableQueryString{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableRemoteAddress{}).Name()):
 		return &ast.VariableRemoteAddress{}, tokens[1:], nil
@@ -971,6 +983,9 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 
 	case strings.ToLower((&ast.VariableRequestURI{}).Name()):
 		return &ast.VariableRequestURI{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableRequestURIRaw{}).Name()):
+		return &ast.VariableRequestURIRaw{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableTransientTransactionCollection{}).Name()):
 		return &ast.VariableTransientTransactionCollection{}, tokens[1:], nil
@@ -1097,6 +1112,10 @@ func parseAction(tokens []item) (ast.Action, []item, error) {
 
 	case (&ast.ActionMessage{}).Name():
 		action, tokens, err = parseActionMessage(tokens)
+
+	case (&ast.ActionMultiMatch{}).Name():
+		action = &ast.ActionMultiMatch{}
+		tokens = tokens[1:]
 
 	case (&ast.ActionNoAuditLog{}).Name():
 		action = &ast.ActionNoAuditLog{}
@@ -2295,6 +2314,9 @@ func parseActionTransform(tokens []item) (*ast.ActionTransform, []item, error) {
 	case strings.ToLower((&ast.TransformBase64Decode{}).Name()):
 		action.Value = &ast.TransformBase64Decode{}
 
+	case strings.ToLower((&ast.TransformCMDLine{}).Name()):
+		action.Value = &ast.TransformCMDLine{}
+
 	case strings.ToLower((&ast.TransformHexEncode{}).Name()):
 		action.Value = &ast.TransformHexEncode{}
 
@@ -2310,8 +2332,17 @@ func parseActionTransform(tokens []item) (*ast.ActionTransform, []item, error) {
 	case strings.ToLower((&ast.TransformNone{}).Name()):
 		action.Value = &ast.TransformNone{}
 
+	case strings.ToLower((&ast.TransformNormalizePathWin{}).Name()):
+		action.Value = &ast.TransformNormalizePathWin{}
+
+	case strings.ToLower((&ast.TransformRemoteNulls{}).Name()):
+		action.Value = &ast.TransformRemoteNulls{}
+
 	case strings.ToLower((&ast.TransformUrlDecodeUni{}).Name()):
 		action.Value = &ast.TransformUrlDecodeUni{}
+
+	case strings.ToLower((&ast.TransformUTF8ToUnicode{}).Name()):
+		action.Value = &ast.TransformUTF8ToUnicode{}
 
 	case strings.ToLower((&ast.TransformSHA1{}).Name()):
 		action.Value = &ast.TransformSHA1{}
