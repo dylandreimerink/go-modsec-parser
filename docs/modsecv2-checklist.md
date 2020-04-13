@@ -10,7 +10,7 @@
 - [ ] SecAuditLogDirMode
 - [ ] SecAuditLogFormat
 - [ ] SecAuditLogFileMode
-- [ ] SecAuditLogParts
+- [x] SecAuditLogParts
 - [ ] SecAuditLogRelevantStatus
 - [ ] SecAuditLogStorageDir
 - [ ] SecAuditLogType
@@ -100,9 +100,9 @@
 - [ ] AUTH_TYPE
 - [x] DURATION
 - [ ] ENV
-- [ ] FILES
-- [ ] FILES_COMBINED_SIZE
-- [ ] FILES_NAMES
+- [x] FILES
+- [x] FILES_COMBINED_SIZE
+- [x] FILES_NAMES
 - [ ] FULL_REQUEST
 - [ ] FULL_REQUEST_LENGTH
 - [ ] FILES_SIZES
@@ -119,7 +119,7 @@
 - [ ] MULTIPART_CRLF_LF_LINES
 - [ ] MULTIPART_FILENAME
 - [ ] MULTIPART_NAME
-- [ ] MULTIPART_STRICT_ERROR
+- [x] MULTIPART_STRICT_ERROR
 - [ ] MULTIPART_UNMATCHED_BOUNDARY
 - [ ] OUTBOUND_DATA_ERROR
 - [ ] PATH_INFO
@@ -140,21 +140,21 @@
 - [ ] REMOTE_HOST
 - [ ] REMOTE_PORT
 - [ ] REMOTE_USER
-- [ ] REQBODY_ERROR
+- [x] REQBODY_ERROR
 - [ ] REQBODY_ERROR_MSG
 - [x] REQBODY_PROCESSOR
-- [ ] REQUEST_BASENAME
+- [x] REQUEST_BASENAME
 - [x] REQUEST_BODY
 - [ ] REQUEST_BODY_LENGTH
 - [x] REQUEST_COOKIES
 - [x] REQUEST_COOKIES_NAMES
 - [x] REQUEST_FILENAME
 - [x] REQUEST_HEADERS
-- [ ] REQUEST_HEADERS_NAMES
+- [x] REQUEST_HEADERS_NAMES
 - [x] REQUEST_LINE
 - [x] REQUEST_METHOD
-- [ ] REQUEST_PROTOCOL
-- [ ] REQUEST_URI
+- [x] REQUEST_PROTOCOL
+- [x] REQUEST_URI
 - [ ] REQUEST_URI_RAW
 - [ ] RESPONSE_BODY
 - [ ] RESPONSE_CONTENT_LENGTH
@@ -196,7 +196,7 @@
 - [ ] USERAGENT_IP
 - [ ] WEBAPPID
 - [ ] WEBSERVER_ERROR_LOG
-- [ ] XML
+- [x] XML
 
 ## Transforms
 
@@ -210,10 +210,10 @@
 - [ ] escapeSeqDecode
 - [ ] hexDecode
 - [x] hexEncode
-- [ ] htmlEntityDecode
+- [x] htmlEntityDecode
 - [ ] jsDecode
-- [ ] length
-- [ ] lowercase
+- [x] length
+- [x] lowercase
 - [ ] md5
 - [x] none
 - [ ] normalisePath
@@ -250,7 +250,7 @@
 - [x] chain
 - [/] ctl
   - [x] auditEngine
-  - [ ] auditLogParts
+  - [x] auditLogParts
   - [ ] debugLogLevel
   - [x] forceRequestBodyVariable
   - [x] requestBodyAccess
@@ -269,7 +269,7 @@
   - [ ] hashEnforcement
 - [x] deny
 - [ ] deprecatevar
-- [ ] drop
+- [x] drop
 - [ ] exec
 - [x] expirevar
 - [x] id
@@ -309,7 +309,7 @@
 
 ## Operators
 
-- [ ] beginsWith
+- [x] beginsWith
 - [x] contains
 - [ ] containsWord
 - [ ] detectSQLi
@@ -317,7 +317,7 @@
 - [x] endsWith
 - [ ] fuzzyHash
 - [x] eq
-- [ ] ge
+- [x] ge
 - [x] geoLookup
 - [ ] gsbLookup
 - [x] gt
@@ -328,21 +328,21 @@
 - [x] le
 - [x] lt
 - [ ] noMatch
-- [ ] pm
-- [ ] pmf
-- [ ] pmFromFile
+- [x] pm
+- [x] pmf
+- [x] pmFromFile
 - [x] rbl
 - [ ] rsub
 - [x] rx
 - [x] streq
 - [ ] strmatch
 - [ ] unconditionalMatch
-- [ ] validateByteRange
+- [x] validateByteRange
 - [ ] validateDTD
 - [ ] validateHash
 - [ ] validateSchema
-- [ ] validateUrlEncoding
-- [ ] validateUtf8Encoding
+- [x] validateUrlEncoding
+- [x] validateUtf8Encoding
 - [ ] verifyCC
 - [ ] verifyCPF
 - [ ] verifySSN

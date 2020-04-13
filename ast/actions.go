@@ -185,6 +185,51 @@ func (action *ActionCTL) Children() []Node {
 	return []Node{action.Option}
 }
 
+type ActionCTLAuditLogPartsOP int
+
+const (
+	ActionCTLAuditLogPartsOPSet ActionCTLAuditLogPartsOP = iota
+	ActionCTLAuditLogPartsOPAdd
+	ActionCTLAuditLogPartsOPSubtract
+)
+
+func (alpo ActionCTLAuditLogPartsOP) Valid() bool {
+	return alpo == ActionCTLAuditLogPartsOPSet || alpo == ActionCTLAuditLogPartsOPAdd || alpo == ActionCTLAuditLogPartsOPSubtract
+}
+
+func (alpo ActionCTLAuditLogPartsOP) String() string {
+	switch alpo {
+	case ActionCTLAuditLogPartsOPSet:
+		return "="
+	case ActionCTLAuditLogPartsOPAdd:
+		return "+"
+	case ActionCTLAuditLogPartsOPSubtract:
+		return "-"
+	}
+
+	return "INVALID"
+}
+
+//ActionCTLAuditLogParts is a special purpose "Directive" which should only be used as Option value for ActionCTL
+// it adds or removes parts from the audit log at runtime
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ctl
+type ActionCTLAuditLogParts struct {
+	AbstractNode
+	Value []SecAuditLogPart
+	Op    ActionCTLAuditLogPartsOP
+}
+
+func (frbv *ActionCTLAuditLogParts) Name() string {
+	return "auditLogParts"
+}
+
+//Directive is a marker to associate the struct with the Directive interface
+func (frbv *ActionCTLAuditLogParts) Directive() {}
+
+func (frbv *ActionCTLAuditLogParts) Children() []Node {
+	return []Node{}
+}
+
 //ActionCTLForceRequestBodyVariable is a special purpose "Directive" which should only be used as Option value for ActionCTL
 // The forceRequestBodyVariable option allows you to configure the REQUEST_BODY variable to be set when there is no request body processor configured. This allows for inspection of request bodies of unknown types.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#ctl
@@ -350,6 +395,24 @@ func (action *ActionDeny) ActionType() ActionType {
 }
 
 func (action *ActionDeny) Children() []Node {
+	return []Node{}
+}
+
+//ActionDrop Stops rule processing and intercepts transaction.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#drop
+type ActionDrop struct {
+	AbstractNode
+}
+
+func (action *ActionDrop) Name() string {
+	return "drop"
+}
+
+func (action *ActionDrop) ActionType() ActionType {
+	return ACTION_TYPE_DISRUPTIVE
+}
+
+func (action *ActionDrop) Children() []Node {
 	return []Node{}
 }
 

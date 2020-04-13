@@ -67,6 +67,85 @@ func (dir *DirectiveSecAuditEngine) Children() []Node {
 	return []Node{}
 }
 
+//SecAuditLogPart describes a single part of the audit log format
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#SecAuditLogParts
+type SecAuditLogPart rune
+
+const (
+	//SecAuditLogPartA represents: Audit log header (mandatory).
+	SecAuditLogPartA SecAuditLogPart = 'A'
+
+	//SecAuditLogPartB represents: Request headers.
+	SecAuditLogPartB SecAuditLogPart = 'B'
+
+	//SecAuditLogPartC represents: Request body (present only if the request body exists and ModSecurity is configured to intercept it. This would require SecRequestBodyAccess to be set to on).
+	SecAuditLogPartC SecAuditLogPart = 'C'
+
+	//SecAuditLogPartD represents: Reserved for intermediary response headers; not implemented yet.
+	SecAuditLogPartD SecAuditLogPart = 'D'
+
+	//SecAuditLogPartE represents: Intermediary response body (present only if ModSecurity is configured to intercept response bodies,
+	// and if the audit log engine is configured to record it. Intercepting response bodies requires SecResponseBodyAccess to be enabled).
+	// Intermediary response body is the same as the actual response body unless ModSecurity intercepts the intermediary response body,
+	// in which case the actual response body will contain the error message (either the Apache default error message, or the ErrorDocument page).
+	SecAuditLogPartE SecAuditLogPart = 'E'
+
+	//SecAuditLogPartF represents: Final response headers (excluding the Date and Server headers, which are always added by Apache in the late stage of content delivery).
+	SecAuditLogPartF SecAuditLogPart = 'F'
+
+	//SecAuditLogPartG represents: Reserved for the actual response body; not implemented yet.
+	SecAuditLogPartG SecAuditLogPart = 'G'
+
+	//SecAuditLogPartH represents: Audit log trailer.
+	SecAuditLogPartH SecAuditLogPart = 'H'
+
+	//SecAuditLogPartI represents: his part is a replacement for part C. It will log the same data as C in all cases except when multipart/form-data encoding in used.
+	// In this case, it will log a fake application/x-www-form-urlencoded body that contains the information about parameters but not about the files.
+	// This is handy if you don’t want to have (often large) files stored in your audit logs.
+	SecAuditLogPartI SecAuditLogPart = 'I'
+
+	//SecAuditLogPartJ represents: This part contains information about the files uploaded using multipart/form-data encoding.
+	SecAuditLogPartJ SecAuditLogPart = 'J'
+
+	//SecAuditLogPartK represents: This part contains a full list of every rule that matched (one per line) in the order they were matched. The rules are fully qualified and will thus show inherited actions and default operators. Supported as of v2.5.0.
+	SecAuditLogPartK SecAuditLogPart = 'K'
+
+	//SecAuditLogPartZ represents: Final boundary, signifies the end of the entry (mandatory).
+	SecAuditLogPartZ SecAuditLogPart = 'Z'
+)
+
+func (alp SecAuditLogPart) Valid() bool {
+	if alp >= SecAuditLogPartA && alp <= SecAuditLogPartK || alp == SecAuditLogPartZ {
+		return true
+	}
+
+	return false
+}
+
+func (alp SecAuditLogPart) String() string {
+	return string([]rune{rune(alp)})
+}
+
+//DirectiveSecAuditLogParts Defines which parts of each transaction are going to be recorded in the audit log.
+// Each part is assigned a single letter; when a letter appears in the list then the equivalent part will be recorded.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#SecAuditLogParts
+type DirectiveSecAuditLogParts struct {
+	AbstractNode
+	Value []SecAuditLogPart
+}
+
+func (dir *DirectiveSecAuditLogParts) Name() string {
+	return "SecAuditLogParts"
+}
+
+//Directive is a marker to associate the struct with the Directive interface
+func (dir *DirectiveSecAuditLogParts) Directive() {}
+
+//Children returns all child nodes, this satisfies the Node interface
+func (dir *DirectiveSecAuditLogParts) Children() []Node {
+	return []Node{}
+}
+
 //DirectiveSecComponentSignature Appends component signature to the ModSecurity signature.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-%28v2.x%29#seccomponentsignature
 type DirectiveSecComponentSignature struct {

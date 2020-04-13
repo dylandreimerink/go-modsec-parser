@@ -218,6 +218,60 @@ func (v *VariableDuration) Children() []Node {
 	return []Node{}
 }
 
+//VariableFiles Contains a collection of original file names (as they were called on the remote user’s filesys- tem). Available only on inspected multipart/form-data requests.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#FILES
+type VariableFiles struct {
+	AbstractNode
+}
+
+func (v *VariableFiles) Name() string {
+	return "FILES"
+}
+
+func (v *VariableFiles) IsCollection() bool {
+	return true
+}
+
+func (v *VariableFiles) Children() []Node {
+	return []Node{}
+}
+
+//VariableFilesCombinedSize Contains the total size of the files transported in request body. Available only on inspected multipart/form-data requests.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#FILES_COMBINED_SIZE
+type VariableFilesCombinedSize struct {
+	AbstractNode
+}
+
+func (v *VariableFilesCombinedSize) Name() string {
+	return "FILES_COMBINED_SIZE"
+}
+
+func (v *VariableFilesCombinedSize) IsCollection() bool {
+	return false
+}
+
+func (v *VariableFilesCombinedSize) Children() []Node {
+	return []Node{}
+}
+
+//VariableFilesNames Contains a list of form fields that were used for file upload. Available only on inspected multipart/form-data requests.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#FILES_NAMES
+type VariableFilesNames struct {
+	AbstractNode
+}
+
+func (v *VariableFilesNames) Name() string {
+	return "FILES_NAMES"
+}
+
+func (v *VariableFilesNames) IsCollection() bool {
+	return true
+}
+
+func (v *VariableFilesNames) Children() []Node {
+	return []Node{}
+}
+
 //VariableGEO is a collection populated by the results of the last @geoLookup operator. The collection can be used to match geographical fields looked from an IP address or hostname.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#GEO
 type VariableGEO struct {
@@ -233,6 +287,29 @@ func (v *VariableGEO) IsCollection() bool {
 }
 
 func (v *VariableGEO) Children() []Node {
+	return []Node{}
+}
+
+//VariableMultipartStructError MULTIPART_STRICT_ERROR will be set to 1 when any of the following variables is also set to 1:
+// REQBODY_PROCESSOR_ERROR, MULTIPART_BOUNDARY_QUOTED, MULTIPART_BOUNDARY_WHITESPACE, MULTIPART_DATA_BEFORE,
+// MULTIPART_DATA_AFTER, MULTIPART_HEADER_FOLDING, MULTIPART_LF_LINE, MULTIPART_MISSING_SEMICOLON MULTIPART_INVALID_QUOTING MULTIPART_INVALID_HEADER_FOLDING MULTIPART_FILE_LIMIT_EXCEEDED.
+// Each of these variables covers one unusual (although sometimes legal) aspect of the request body in multipart/form-data format.
+// Your policies should always contain a rule to check either this variable (easier) or one or more individual variables (if you know exactly what you want to accomplish).
+// Depending on the rate of false positives and your default policy you should decide whether to block or just warn when the rule is triggered.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#MULTIPART_STRICT_ERROR
+type VariableMultipartStructError struct {
+	AbstractNode
+}
+
+func (v *VariableMultipartStructError) Name() string {
+	return "MULTIPART_STRICT_ERROR"
+}
+
+func (v *VariableMultipartStructError) IsCollection() bool {
+	return false
+}
+
+func (v *VariableMultipartStructError) Children() []Node {
 	return []Node{}
 }
 
@@ -254,6 +331,25 @@ func (v *VariableRemoteAddress) Children() []Node {
 	return []Node{}
 }
 
+//VariableRequestBodyError Contains the status of the request body processor used for request body parsing. The values can be 0 (no error) or 1 (error).
+// This variable will be set by request body processors (typically the multipart/request-data parser, JSON or the XML parser) when they fail to do their work.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#REQBODY_ERROR
+type VariableRequestBodyError struct {
+	AbstractNode
+}
+
+func (v *VariableRequestBodyError) Name() string {
+	return "REQBODY_ERROR"
+}
+
+func (v *VariableRequestBodyError) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRequestBodyError) Children() []Node {
+	return []Node{}
+}
+
 //VariableRequestBodyProcessor Contains the name of the currently used request body processor. The possible values are URLENCODED, MULTIPART, and XML.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#REQBODY_PROCESSOR
 type VariableRequestBodyProcessor struct {
@@ -269,6 +365,24 @@ func (v *VariableRequestBodyProcessor) IsCollection() bool {
 }
 
 func (v *VariableRequestBodyProcessor) Children() []Node {
+	return []Node{}
+}
+
+//VariableRequestBasename This variable holds just the filename part of REQUEST_FILENAME (e.g., index.php).
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#request_body
+type VariableRequestBasename struct {
+	AbstractNode
+}
+
+func (v *VariableRequestBasename) Name() string {
+	return "REQUEST_BASENAME"
+}
+
+func (v *VariableRequestBasename) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRequestBasename) Children() []Node {
 	return []Node{}
 }
 
@@ -365,6 +479,24 @@ func (v *VariableRequestHeaders) Children() []Node {
 	return []Node{}
 }
 
+//VariableRequestHeadersNames This variable is a collection of the names of all of the request headers.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#request_headers_names
+type VariableRequestHeadersNames struct {
+	AbstractNode
+}
+
+func (v *VariableRequestHeadersNames) Name() string {
+	return "REQUEST_HEADERS_NAMES"
+}
+
+func (v *VariableRequestHeadersNames) IsCollection() bool {
+	return true
+}
+
+func (v *VariableRequestHeadersNames) Children() []Node {
+	return []Node{}
+}
+
 //VariableRequestLine This variable holds the complete request line sent to the server (including the request method and HTTP version information).
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#REQUEST_LINE
 type VariableRequestLine struct {
@@ -398,6 +530,43 @@ func (v *VariableRequestMethod) IsCollection() bool {
 }
 
 func (v *VariableRequestMethod) Children() []Node {
+	return []Node{}
+}
+
+//VariableRequestProtocol This variable holds the request protocol version information.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#REQUEST_PROTOCOL
+type VariableRequestProtocol struct {
+	AbstractNode
+}
+
+func (v *VariableRequestProtocol) Name() string {
+	return "REQUEST_PROTOCOL"
+}
+
+func (v *VariableRequestProtocol) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRequestProtocol) Children() []Node {
+	return []Node{}
+}
+
+//VariableRequestURI This variable holds the full request URL including the query string data (e.g., /index.php? p=X).
+// However, it will never contain a domain name, even if it was provided on the request line.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#REQUEST_URI
+type VariableRequestURI struct {
+	AbstractNode
+}
+
+func (v *VariableRequestURI) Name() string {
+	return "REQUEST_URI"
+}
+
+func (v *VariableRequestURI) IsCollection() bool {
+	return false
+}
+
+func (v *VariableRequestURI) Children() []Node {
 	return []Node{}
 }
 
@@ -438,5 +607,25 @@ func (v *VariableUniqueID) IsCollection() bool {
 }
 
 func (v *VariableUniqueID) Children() []Node {
+	return []Node{}
+}
+
+//VariableXML Special collection used to interact with the XML parser.
+// It can be used standalone as a target for the validateDTD and validateSchema operator.
+// Otherwise, it must contain a valid XPath expression, which will then be evaluated against a previously parsed XML DOM tree.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#UNIQUE_ID
+type VariableXML struct {
+	AbstractNode
+}
+
+func (v *VariableXML) Name() string {
+	return "XML"
+}
+
+func (v *VariableXML) IsCollection() bool {
+	return true
+}
+
+func (v *VariableXML) Children() []Node {
 	return []Node{}
 }

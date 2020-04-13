@@ -21,7 +21,7 @@ func (t *TransformBase64Decode) Children() []Node {
 
 func (t *TransformBase64Decode) Transform() {}
 
-//TransformNone Encodes string (possibly containing binary characters) by replacing each input byte with two hexadecimal characters. For example, xyz is encoded as 78797a.
+//TransformHexEncode Encodes string (possibly containing binary characters) by replacing each input byte with two hexadecimal characters. For example, xyz is encoded as 78797a.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#hexencode
 type TransformHexEncode struct {
 	AbstractNode
@@ -36,6 +36,63 @@ func (t *TransformHexEncode) Children() []Node {
 }
 
 func (t *TransformHexEncode) Transform() {}
+
+//TransformHTMLEntityDecode Decodes the characters encoded as HTML entities. The following variants are supported:
+//
+//	HH and HH; (where H is any hexadecimal number)
+//	DDD and DDD; (where D is any decimal number)
+//	&quotand"
+//	&nbspand
+//	&ltand<
+//	&gtand>
+//
+//This function always converts one HTML entity into one byte, possibly resulting in a loss of information (if the entity refers to a character that cannot be represented with the single byte). It is thus useful to uncover bytes that would otherwise not need to be encoded, but it cannot do anything meaningful with the characters from the range above 0xff.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#htmlEntityDecode
+type TransformHTMLEntityDecode struct {
+	AbstractNode
+}
+
+func (t *TransformHTMLEntityDecode) Name() string {
+	return "htmlEntityDecode"
+}
+
+func (t *TransformHTMLEntityDecode) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformHTMLEntityDecode) Transform() {}
+
+//TransformLength Looks up the length of the input string in bytes, placing it (as string) in output. For example, if it gets ABCDE on input, this transformation function will return 5 on output.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#length
+type TransformLength struct {
+	AbstractNode
+}
+
+func (t *TransformLength) Name() string {
+	return "length"
+}
+
+func (t *TransformLength) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformLength) Transform() {}
+
+//TransformLowercase Converts all characters to lowercase using the current C locale.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#lowercase
+type TransformLowercase struct {
+	AbstractNode
+}
+
+func (t *TransformLowercase) Name() string {
+	return "lowercase"
+}
+
+func (t *TransformLowercase) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformLowercase) Transform() {}
 
 //TransformNone Not an actual transformation function, but an instruction to ModSecurity to remove all transformation functions associated with the current rule.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#none

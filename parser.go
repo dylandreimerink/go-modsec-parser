@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/davecgh/go-spew/spew"
+
 	"github.com/dylandreimerink/go-modsec-parser/ast"
 )
 
@@ -79,6 +81,30 @@ func parseDirective(tokens []item) (ast.Directive, []item, error) {
 	case strings.ToLower((&ast.DirectiveSecAction{}).Name()):
 		directive, tokens, err = parseDirectiveSecAction(tokens[1:])
 
+	case strings.ToLower((&ast.DirectiveSecAuditEngine{}).Name()):
+		secAuditEngine := &ast.DirectiveSecAuditEngine{}
+
+		//Consume all tokens until the start of the first argument
+		tokens = tokens[1:]
+		for tokens[0].typ != itemArgumentStart {
+			tokens = tokens[1:]
+		}
+
+		secAuditEngine.Value, tokens, err = parseDirectiveSecAuditEngineValue(tokens[1:])
+		directive = secAuditEngine
+
+	case strings.ToLower((&ast.DirectiveSecAuditLogParts{}).Name()):
+		secAuditParts := &ast.DirectiveSecAuditLogParts{}
+
+		//Consume all tokens until the start of the first argument
+		tokens = tokens[1:]
+		for tokens[0].typ != itemArgumentStart {
+			tokens = tokens[1:]
+		}
+
+		secAuditParts.Value, tokens, err = parseDirectiveSecAuditLogPartsValue(tokens[1:])
+		directive = secAuditParts
+
 	case strings.ToLower((&ast.DirectiveSecComponentSignature{}).Name()):
 		directive, tokens, err = parseDirectiveSecComponentSignature(tokens[1:])
 
@@ -127,18 +153,6 @@ func parseDirective(tokens []item) (ast.Directive, []item, error) {
 		secRuleEngine.Value, tokens, err = parseDirectiveSecRuleEngineValue(tokens[1:])
 		directive = secRuleEngine
 
-	case strings.ToLower((&ast.DirectiveSecAuditEngine{}).Name()):
-		secAuditEngine := &ast.DirectiveSecAuditEngine{}
-
-		//Consume all tokens until the start of the first argument
-		tokens = tokens[1:]
-		for tokens[0].typ != itemArgumentStart {
-			tokens = tokens[1:]
-		}
-
-		secAuditEngine.Value, tokens, err = parseDirectiveSecAuditEngineValue(tokens[1:])
-		directive = secAuditEngine
-
 	default:
 		return nil, tokens, fmt.Errorf("Unknown directive '%s' at '%s'", tokens[0].val, tokens[0].start)
 	}
@@ -173,6 +187,26 @@ func parseDirectiveSecAuditEngineValue(tokens []item) (ast.SecAuditEngineValue, 
 	default:
 		return ast.SecAuditEngineValue(""), tokens, fmt.Errorf("Unknown SecAuditEngine value '%s' at '%s'", tokens[0].val, tokens[0].start)
 	}
+}
+
+func parseDirectiveSecAuditLogPartsValue(tokens []item) ([]ast.SecAuditLogPart, []item, error) {
+	parts := []ast.SecAuditLogPart{}
+	if tokens[0].typ != itemIdent {
+		return parts, tokens, fmt.Errorf("Unexpected '%s' as '%s', Expected audit logs parts", tokens[0].typ, tokens[0].start)
+	}
+
+	for _, partRune := range tokens[0].val {
+		part := ast.SecAuditLogPart(partRune)
+		if !part.Valid() {
+			return parts, tokens, fmt.Errorf("Unexpected '%v' as '%s', Not a valid audit log part letter", part, tokens[0].start)
+		}
+
+		parts = append(parts, part)
+	}
+
+	tokens = tokens[1:]
+
+	return parts, tokens, nil
 }
 
 func parseDirectiveSecRuleEngineValue(tokens []item) (ast.SecRuleEngineValue, []item, error) {
@@ -307,6 +341,22 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 	var operator ast.Operator
 
 	switch strings.ToLower(tokens[0].val) {
+	case strings.ToLower((&ast.OperatorBeginsWith{}).Name()):
+		op := &ast.OperatorBeginsWith{}
+
+		if tokens[1].typ == itemWhitespace {
+
+			var err error
+			op.Value, tokens, err = parseExpandableStringOperatorArgument(tokens[2:])
+			if err != nil {
+				return operator, tokens, err
+			}
+
+		} else {
+			return operator, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected operator argument", tokens[0].val, tokens[0].start)
+		}
+
+		operator = op
 	case strings.ToLower((&ast.OperatorContains{}).Name()):
 		op := &ast.OperatorContains{}
 
@@ -341,6 +391,22 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 		operator = op
 	case strings.ToLower((&ast.OperatorEquals{}).Name()):
 		op := &ast.OperatorEquals{}
+
+		if tokens[1].typ == itemWhitespace {
+
+			var err error
+			op.Value, tokens, err = parseExpandableStringOperatorArgument(tokens[2:])
+			if err != nil {
+				return operator, tokens, err
+			}
+
+		} else {
+			return operator, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected operator argument", tokens[0].val, tokens[0].start)
+		}
+
+		operator = op
+	case strings.ToLower((&ast.OperatorGreaterThanOrEquals{}).Name()):
+		op := &ast.OperatorGreaterThanOrEquals{}
 
 		if tokens[1].typ == itemWhitespace {
 
@@ -426,6 +492,83 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 		}
 
 		operator = op
+	case strings.ToLower((&ast.OperatorPM{}).Name()):
+		op := &ast.OperatorPM{
+			Phrases: []string{},
+		}
+		if tokens[1].typ == itemWhitespace {
+			tokens = tokens[2:]
+			phrase := ""
+			for {
+				if len(tokens) == 0 {
+					break
+				}
+
+				if tokens[0].typ == itemArgumentStop {
+					tokens = tokens[1:]
+					break
+				}
+
+				// The phrases are seperated with spaces or pipes (snort/suricata content style)
+				if tokens[0].typ == itemWhitespace || tokens[0].typ == itemPipe {
+					tokens = tokens[1:]
+
+					if len(phrase) > 0 {
+						op.Phrases = append(op.Phrases, phrase)
+					}
+
+					phrase = ""
+					continue
+				}
+
+				phrase += tokens[0].val
+				tokens = tokens[1:]
+			}
+			if len(phrase) > 0 {
+				op.Phrases = append(op.Phrases, phrase)
+			}
+		} else {
+			return operator, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected operator argument", tokens[0].val, tokens[0].start)
+		}
+		operator = op
+	case strings.ToLower((&ast.OperatorPMFromFile{}).Name()), "pmf":
+		op := &ast.OperatorPMFromFile{
+			Files: []string{},
+		}
+		if tokens[1].typ == itemWhitespace {
+			tokens = tokens[2:]
+			file := ""
+			for {
+				if len(tokens) == 0 {
+					break
+				}
+
+				if tokens[0].typ == itemArgumentStop {
+					tokens = tokens[1:]
+					break
+				}
+
+				if tokens[0].typ == itemWhitespace {
+					tokens = tokens[1:]
+
+					if len(file) > 0 {
+						op.Files = append(op.Files, file)
+					}
+
+					file = ""
+					continue
+				}
+
+				file += tokens[0].val
+				tokens = tokens[1:]
+			}
+			if len(file) > 0 {
+				op.Files = append(op.Files, file)
+			}
+		} else {
+			return operator, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected operator argument", tokens[0].val, tokens[0].start)
+		}
+		operator = op
 	case strings.ToLower((&ast.OperatorRBL{}).Name()):
 		op := &ast.OperatorRBL{}
 		if tokens[1].typ == itemWhitespace {
@@ -483,6 +626,30 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 			return operator, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected operator argument", tokens[0].val, tokens[0].start)
 		}
 
+		operator = op
+	case strings.ToLower((&ast.OperatorValidateByteRange{}).Name()):
+		op := &ast.OperatorValidateByteRange{}
+
+		if tokens[1].typ == itemWhitespace {
+
+			var err error
+			op, tokens, err = parseOperatorValidateByteRange(tokens[2:])
+			if err != nil {
+				return operator, tokens, err
+			}
+
+		} else {
+			return operator, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected operator argument", tokens[0].val, tokens[0].start)
+		}
+
+		operator = op
+	case strings.ToLower((&ast.OperatorValidateURLEncoding{}).Name()):
+		op := &ast.OperatorValidateURLEncoding{}
+		tokens = tokens[2:]
+		operator = op
+	case strings.ToLower((&ast.OperatorValidateUTF8Encoding{}).Name()):
+		op := &ast.OperatorValidateUTF8Encoding{}
+		tokens = tokens[2:]
 		operator = op
 	case strings.ToLower((&ast.OperatorWithin{}).Name()):
 		op := &ast.OperatorWithin{}
@@ -748,14 +915,32 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 	case strings.ToLower((&ast.VariableDuration{}).Name()):
 		return &ast.VariableDuration{}, tokens[1:], nil
 
+	case strings.ToLower((&ast.VariableFiles{}).Name()):
+		return &ast.VariableFiles{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableFilesCombinedSize{}).Name()):
+		return &ast.VariableFilesCombinedSize{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableFilesNames{}).Name()):
+		return &ast.VariableFilesNames{}, tokens[1:], nil
+
 	case strings.ToLower((&ast.VariableGEO{}).Name()):
 		return &ast.VariableGEO{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableMultipartStructError{}).Name()):
+		return &ast.VariableMultipartStructError{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableRemoteAddress{}).Name()):
 		return &ast.VariableRemoteAddress{}, tokens[1:], nil
 
+	case strings.ToLower((&ast.VariableRequestBodyError{}).Name()):
+		return &ast.VariableRequestBodyError{}, tokens[1:], nil
+
 	case strings.ToLower((&ast.VariableRequestBodyProcessor{}).Name()):
 		return &ast.VariableRequestBodyProcessor{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableRequestBasename{}).Name()):
+		return &ast.VariableRequestBasename{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableRequestBody{}).Name()):
 		return &ast.VariableRequestBody{}, tokens[1:], nil
@@ -772,17 +957,29 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 	case strings.ToLower((&ast.VariableRequestHeaders{}).Name()):
 		return &ast.VariableRequestHeaders{}, tokens[1:], nil
 
+	case strings.ToLower((&ast.VariableRequestHeadersNames{}).Name()):
+		return &ast.VariableRequestHeadersNames{}, tokens[1:], nil
+
 	case strings.ToLower((&ast.VariableRequestLine{}).Name()):
 		return &ast.VariableRequestLine{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableRequestMethod{}).Name()):
 		return &ast.VariableRequestMethod{}, tokens[1:], nil
 
+	case strings.ToLower((&ast.VariableRequestProtocol{}).Name()):
+		return &ast.VariableRequestProtocol{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableRequestURI{}).Name()):
+		return &ast.VariableRequestURI{}, tokens[1:], nil
+
 	case strings.ToLower((&ast.VariableTransientTransactionCollection{}).Name()):
 		return &ast.VariableTransientTransactionCollection{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableUniqueID{}).Name()):
 		return &ast.VariableUniqueID{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableXML{}).Name()):
+		return &ast.VariableXML{}, tokens[1:], nil
 	}
 
 	//Assume the variable is a custom collection
@@ -876,6 +1073,10 @@ func parseAction(tokens []item) (ast.Action, []item, error) {
 
 	case (&ast.ActionDeny{}).Name():
 		action = &ast.ActionDeny{}
+		tokens = tokens[1:]
+
+	case (&ast.ActionDrop{}).Name():
+		action = &ast.ActionDrop{}
 		tokens = tokens[1:]
 
 	case (&ast.ActionExpireVar{}).Name():
@@ -1043,6 +1244,32 @@ func parseActionCTL(tokens []item) (*ast.ActionCTL, []item, error) {
 
 		action.Option = option
 
+	case strings.ToLower((&ast.ActionCTLAuditLogParts{}).Name()):
+		if tokens[3].typ != itemEquals {
+			return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a equals sign", tokens[3].val, tokens[3].start)
+		}
+
+		option := &ast.ActionCTLAuditLogParts{}
+
+		if tokens[4].typ == itemPlus {
+			option.Op = ast.ActionCTLAuditLogPartsOPAdd
+			tokens = tokens[4:]
+		} else if tokens[4].typ == itemMinus {
+			option.Op = ast.ActionCTLAuditLogPartsOPSubtract
+			tokens = tokens[4:]
+		} else {
+			option.Op = ast.ActionCTLAuditLogPartsOPSet
+			tokens = tokens[3:]
+		}
+
+		var err error
+		option.Value, tokens, err = parseDirectiveSecAuditLogPartsValue(tokens[1:])
+		if err != nil {
+			return nil, tokens, err
+		}
+
+		action.Option = option
+
 	case strings.ToLower((&ast.ActionCTLForceRequestBodyVariable{}).Name()):
 		if tokens[3].typ != itemEquals {
 			return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a equals sign", tokens[3].val, tokens[3].start)
@@ -1181,6 +1408,70 @@ func parseActionCTL(tokens []item) (*ast.ActionCTL, []item, error) {
 
 	return action, tokens, nil
 }
+
+func parseOperatorValidateByteRange(tokens []item) (*ast.OperatorValidateByteRange, []item, error) {
+
+	op := &ast.OperatorValidateByteRange{
+		Ranges: []*ast.ByteRange{},
+	}
+
+	for {
+		if len(tokens) == 0 {
+			spew.Dump(tokens)
+			return op, tokens, nil
+		}
+
+		if tokens[0].typ == itemArgumentStop {
+			tokens = tokens[1:]
+			return op, tokens, nil
+		}
+
+		if tokens[0].typ == itemComma || tokens[0].typ == itemWhitespace {
+			tokens = tokens[1:]
+			continue
+		}
+
+		brange := &ast.ByteRange{}
+
+		if tokens[0].typ != itemIdent {
+			return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a byte range or byte", tokens[0].val, tokens[0].start)
+		}
+
+		byteVal, err := strconv.Atoi(tokens[0].val)
+		if err != nil {
+			return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a numeric byte value", tokens[0].val, tokens[0].start)
+		}
+
+		if byteVal < 0 || byteVal > 255 {
+			return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a numeric byte value between 0 and 255", tokens[0].val, tokens[0].start)
+		}
+
+		brange.StartID = byte(byteVal)
+
+		//If there is a minus it indicates a range (i.e. 123-456)
+		if tokens[1].typ == itemMinus {
+			byteVal, err = strconv.Atoi(tokens[2].val)
+			if err != nil {
+				return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a numeric byte value", tokens[0].val, tokens[0].start)
+			}
+
+			if byteVal < 0 || byteVal > 255 {
+				return nil, tokens, fmt.Errorf("Unexpected '%s' at '%s', expected a numeric byte value between 0 and 255", tokens[0].val, tokens[0].start)
+			}
+
+			brange.EndID = byte(byteVal)
+
+			tokens = tokens[3:]
+		} else {
+			brange.EndID = brange.StartID
+
+			tokens = tokens[1:]
+		}
+
+		op.Ranges = append(op.Ranges, brange)
+	}
+}
+
 func parseActionCTLRuleRemoveByID(tokens []item) (*ast.ActionCTLRuleRemoveByID, []item, error) {
 
 	option := &ast.ActionCTLRuleRemoveByID{}
@@ -2006,6 +2297,15 @@ func parseActionTransform(tokens []item) (*ast.ActionTransform, []item, error) {
 
 	case strings.ToLower((&ast.TransformHexEncode{}).Name()):
 		action.Value = &ast.TransformHexEncode{}
+
+	case strings.ToLower((&ast.TransformHTMLEntityDecode{}).Name()):
+		action.Value = &ast.TransformHTMLEntityDecode{}
+
+	case strings.ToLower((&ast.TransformLength{}).Name()):
+		action.Value = &ast.TransformLength{}
+
+	case strings.ToLower((&ast.TransformLowercase{}).Name()):
+		action.Value = &ast.TransformLowercase{}
 
 	case strings.ToLower((&ast.TransformNone{}).Name()):
 		action.Value = &ast.TransformNone{}
