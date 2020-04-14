@@ -373,6 +373,10 @@ func parseSecRuleOperator(tokens []item) (ast.Operator, []item, error) {
 		}
 
 		operator = op
+	case strings.ToLower((&ast.OperatorDetectXSS{}).Name()):
+		op := &ast.OperatorDetectXSS{}
+		tokens = tokens[2:]
+		operator = op
 	case strings.ToLower((&ast.OperatorEndsWith{}).Name()):
 		op := &ast.OperatorEndsWith{}
 
@@ -932,6 +936,9 @@ func parseVariable(tokens []item) (ast.Variable, []item, error) {
 
 	case strings.ToLower((&ast.VariableGEO{}).Name()):
 		return &ast.VariableGEO{}, tokens[1:], nil
+
+	case strings.ToLower((&ast.VariableMatchedVars{}).Name()):
+		return &ast.VariableMatchedVars{}, tokens[1:], nil
 
 	case strings.ToLower((&ast.VariableMatchedVarsNames{}).Name()):
 		return &ast.VariableMatchedVarsNames{}, tokens[1:], nil
@@ -2317,11 +2324,20 @@ func parseActionTransform(tokens []item) (*ast.ActionTransform, []item, error) {
 	case strings.ToLower((&ast.TransformCMDLine{}).Name()):
 		action.Value = &ast.TransformCMDLine{}
 
+	case strings.ToLower((&ast.TransformCompressWhitespace{}).Name()):
+		action.Value = &ast.TransformCompressWhitespace{}
+
+	case strings.ToLower((&ast.TransformCSSDecode{}).Name()):
+		action.Value = &ast.TransformCSSDecode{}
+
 	case strings.ToLower((&ast.TransformHexEncode{}).Name()):
 		action.Value = &ast.TransformHexEncode{}
 
 	case strings.ToLower((&ast.TransformHTMLEntityDecode{}).Name()):
 		action.Value = &ast.TransformHTMLEntityDecode{}
+
+	case strings.ToLower((&ast.TransformJSDecode{}).Name()):
+		action.Value = &ast.TransformJSDecode{}
 
 	case strings.ToLower((&ast.TransformLength{}).Name()):
 		action.Value = &ast.TransformLength{}
@@ -2332,11 +2348,20 @@ func parseActionTransform(tokens []item) (*ast.ActionTransform, []item, error) {
 	case strings.ToLower((&ast.TransformNone{}).Name()):
 		action.Value = &ast.TransformNone{}
 
-	case strings.ToLower((&ast.TransformNormalizePathWin{}).Name()):
+	case strings.ToLower((&ast.TransformNormalizePath{}).Name()), "normalisepath":
+		action.Value = &ast.TransformNormalizePath{}
+
+	case strings.ToLower((&ast.TransformNormalizePathWin{}).Name()), "normalisepathwin":
 		action.Value = &ast.TransformNormalizePathWin{}
 
-	case strings.ToLower((&ast.TransformRemoteNulls{}).Name()):
-		action.Value = &ast.TransformRemoteNulls{}
+	case strings.ToLower((&ast.TransformRemoveNulls{}).Name()):
+		action.Value = &ast.TransformRemoveNulls{}
+
+	case strings.ToLower((&ast.TransformReplaceComments{}).Name()):
+		action.Value = &ast.TransformReplaceComments{}
+
+	case strings.ToLower((&ast.TransformUrlDecode{}).Name()):
+		action.Value = &ast.TransformUrlDecode{}
 
 	case strings.ToLower((&ast.TransformUrlDecodeUni{}).Name()):
 		action.Value = &ast.TransformUrlDecodeUni{}

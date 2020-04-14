@@ -326,6 +326,24 @@ func (v *VariableGEO) Children() []Node {
 	return []Node{}
 }
 
+//VariableMatchedVars Similar to MATCHED_VAR except that it is a collection of all matches for the current operator check.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#MATCHED_VARS
+type VariableMatchedVars struct {
+	AbstractNode
+}
+
+func (v *VariableMatchedVars) Name() string {
+	return "MATCHED_VARS"
+}
+
+func (v *VariableMatchedVars) IsCollection() bool {
+	return true
+}
+
+func (v *VariableMatchedVars) Children() []Node {
+	return []Node{}
+}
+
 //VariableMatchedVarsNames Similar to MATCHED_VAR_NAME except that it is a collection of all matches for the current operator check.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#MATCHED_VARS_NAMES
 type VariableMatchedVarsNames struct {

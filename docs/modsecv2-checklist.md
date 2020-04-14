@@ -112,7 +112,7 @@
 - [ ] HIGHEST_SEVERITY
 - [ ] INBOUND_DATA_ERROR
 - [ ] MATCHED_VAR
-- [ ] MATCHED_VARS
+- [x] MATCHED_VARS
 - [ ] MATCHED_VAR_NAME
 - [x] MATCHED_VARS_NAMES
 - [ ] MODSEC_BUILD
@@ -205,31 +205,31 @@
 - [ ] base64DecodeExt
 - [ ] base64Encode
 - [x] cmdLine
-- [ ] compressWhitespace
-- [ ] cssDecode
+- [x] compressWhitespace
+- [x] cssDecode
 - [ ] escapeSeqDecode
 - [ ] hexDecode
 - [x] hexEncode
 - [x] htmlEntityDecode
-- [ ] jsDecode
+- [x] jsDecode
 - [x] length
 - [x] lowercase
 - [ ] md5
 - [x] none
-- [ ] normalisePath
-- [ ] normalizePath
-- [ ] normalisePathWin
+- [x] normalisePath
+- [x] normalizePath
+- [x] normalisePathWin
 - [x] normalizePathWin
 - [ ] parityEven7bit
 - [ ] parityOdd7bit
 - [ ] parityZero7bit
 - [x] removeNulls
 - [ ] removeWhitespace
-- [ ] replaceComments
+- [x] replaceComments
 - [ ] removeCommentsChar
 - [ ] removeComments
 - [ ] replaceNulls
-- [ ] urlDecode
+- [x] urlDecode
 - [ ] uppercase
 - [x] urlDecodeUni
 - [ ] urlEncode
@@ -313,7 +313,7 @@
 - [x] contains
 - [ ] containsWord
 - [ ] detectSQLi
-- [ ] detectXSS
+- [x] detectXSS
 - [x] endsWith
 - [ ] fuzzyHash
 - [x] eq

@@ -60,6 +60,22 @@ func (o *OperatorContains) Children() []Node {
 
 func (o *OperatorContains) Operator() {}
 
+//OperatorDetectXSS Returns true if XSS injection is found. This operator uses LibInjection to detect XSS attacks.
+// https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#detectXSS
+type OperatorDetectXSS struct {
+	AbstractOperator
+}
+
+func (o *OperatorDetectXSS) Name() string {
+	return "detectXSS"
+}
+
+func (o *OperatorDetectXSS) Children() []Node {
+	return []Node{}
+}
+
+func (o *OperatorDetectXSS) Operator() {}
+
 //OperatorEndsWith Returns true if the parameter string is found at the end of the input. Macro expansion is performed on the parameter string before comparison.
 // https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#endsWith
 type OperatorEndsWith struct {

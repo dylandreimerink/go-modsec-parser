@@ -37,6 +37,41 @@ func (t *TransformCMDLine) Children() []Node {
 
 func (t *TransformCMDLine) Transform() {}
 
+//TransformCompressWhitespace Converts any of the whitespace characters (0x20, \f, \t, \n, \r, \v, 0xa0) to spaces (ASCII 0x20), compressing multiple consecutive space characters into one.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#compressWhitespace
+type TransformCompressWhitespace struct {
+	AbstractNode
+}
+
+func (t *TransformCompressWhitespace) Name() string {
+	return "compressWhitespace"
+}
+
+func (t *TransformCompressWhitespace) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformCompressWhitespace) Transform() {}
+
+//TransformCSSDecode Decodes characters encoded using the CSS 2.x escape rules syndata.html#characters.
+// This function uses only up to two bytes in the decoding process,
+// meaning that it is useful to uncover ASCII characters encoded using CSS encoding (that wouldn’t normally be encoded),
+// or to counter evasion, which is a combination of a backslash and non-hexadecimal characters (e.g., ja\vascript is equivalent to javascript).
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#cssDecode
+type TransformCSSDecode struct {
+	AbstractNode
+}
+
+func (t *TransformCSSDecode) Name() string {
+	return "cssDecode"
+}
+
+func (t *TransformCSSDecode) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformCSSDecode) Transform() {}
+
 //TransformHexEncode Encodes string (possibly containing binary characters) by replacing each input byte with two hexadecimal characters. For example, xyz is encoded as 78797a.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#hexencode
 type TransformHexEncode struct {
@@ -77,6 +112,23 @@ func (t *TransformHTMLEntityDecode) Children() []Node {
 }
 
 func (t *TransformHTMLEntityDecode) Transform() {}
+
+//TransformJSDecode Decodes JavaScript escape sequences. If a \uHHHH code is in the range of FF01-FF5E (the full width ASCII codes), then the higher byte is used to detect and adjust the lower byte.
+// Otherwise, only the lower byte will be used and the higher byte zeroed (leading to possible loss of information).
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#jsDecode
+type TransformJSDecode struct {
+	AbstractNode
+}
+
+func (t *TransformJSDecode) Name() string {
+	return "jsDecode"
+}
+
+func (t *TransformJSDecode) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformJSDecode) Transform() {}
 
 //TransformLength Looks up the length of the input string in bytes, placing it (as string) in output. For example, if it gets ABCDE on input, this transformation function will return 5 on output.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#length
@@ -126,6 +178,22 @@ func (t *TransformNone) Children() []Node {
 
 func (t *TransformNone) Transform() {}
 
+//TransformNormalizePath Removes multiple slashes, directory self-references, and directory back-references (except when at the beginning of the input) from input string.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#normalizePath
+type TransformNormalizePath struct {
+	AbstractNode
+}
+
+func (t *TransformNormalizePath) Name() string {
+	return "normalizePath"
+}
+
+func (t *TransformNormalizePath) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformNormalizePath) Transform() {}
+
 //TransformNormalizePathWin Same as normalizePath, but first converts backslash characters to forward slashes.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#normalizePathWin
 type TransformNormalizePathWin struct {
@@ -142,21 +210,58 @@ func (t *TransformNormalizePathWin) Children() []Node {
 
 func (t *TransformNormalizePathWin) Transform() {}
 
-//TransformRemoteNulls Removes all NUL bytes from input.
+//TransformRemoveNulls Removes all NUL bytes from input.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#removeNulls
-type TransformRemoteNulls struct {
+type TransformRemoveNulls struct {
 	AbstractNode
 }
 
-func (t *TransformRemoteNulls) Name() string {
+func (t *TransformRemoveNulls) Name() string {
 	return "removeNulls"
 }
 
-func (t *TransformRemoteNulls) Children() []Node {
+func (t *TransformRemoveNulls) Children() []Node {
 	return []Node{}
 }
 
-func (t *TransformRemoteNulls) Transform() {}
+func (t *TransformRemoveNulls) Transform() {}
+
+//TransformReplaceCommentsReplaces each occurrence of a C-style comment (/* ... */) with a single space (multiple consecutive occurrences of which will not be compressed).
+// Unterminated comments will also be replaced with a space (ASCII 0x20). However, a standalone termination of a comment (*/) will not be acted upon.
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#replaceComments
+type TransformReplaceComments struct {
+	AbstractNode
+}
+
+func (t *TransformReplaceComments) Name() string {
+	return "replaceComments"
+}
+
+func (t *TransformReplaceComments) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformReplaceComments) Transform() {}
+
+//TransformUrlDecode Decodes a URL-encoded input string.
+// Invalid encodings (i.e., the ones that use non-hexadecimal characters,
+// or the ones that are at the end of string and have one or two bytes missing) are not converted,
+// but no error is raised. To detect invalid encodings, use the @validateUrlEncoding operator on the input data first.
+// The transformation function should not be used against variables that have already been URL-decoded (such as request parameters) unless it is your intention to perform URL decoding twice!
+//https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#urlDecode
+type TransformUrlDecode struct {
+	AbstractNode
+}
+
+func (t *TransformUrlDecode) Name() string {
+	return "urlDecode"
+}
+
+func (t *TransformUrlDecode) Children() []Node {
+	return []Node{}
+}
+
+func (t *TransformUrlDecode) Transform() {}
 
 //TransformUrlDecodeUni Like urlDecode, but with support for the Microsoft-specific %u encoding. If the code is in the range of FF01-FF5E (the full-width ASCII codes), then the higher byte is used to detect and adjust the lower byte. Otherwise, only the lower byte will be used and the higher byte zeroed.
 //https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-(v2.x)#urlDecodeUni
